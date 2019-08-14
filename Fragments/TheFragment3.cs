@@ -78,6 +78,11 @@ namespace BottomNavigationViewPager.Fragments
         {
             public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
             {
+                string _jsExtend = "javascript:(function() { " +
+                "listingExtend(40);" + "})()";
+
+                _wv.LoadUrl(_jsExtend);
+
                 _main.CustomOnScroll();
             }
         }
@@ -146,11 +151,14 @@ namespace BottomNavigationViewPager.Fragments
                                 "document.getElementById('listing-popular').style.display='none'; " + "})()";
 
                 string _jsSelectTab3 = "javascript:(function() { " +
-                "document.getElementById('listing-subscribed').style.display='block'; " + "})()";
+                                "document.getElementById('listing-trending').style.display='block'; " + "})()";
 
+                string _jsSelectTab4 = "javascript:(function() { " +
+                "document.getElementById('listing-subscribed').style.display='block'; " + "})()";
+                
                 string _jsHideLabel = "javascript:(function() { " +
                    "document.getElementsByClassName('tab-scroll-inner')[0].style.display='none'; " + "})()";
-
+                   
                 _wv.LoadUrl(_jsHideBanner);
 
                 _wv.LoadUrl(_jsHideBuff);
