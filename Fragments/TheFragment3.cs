@@ -36,7 +36,7 @@ namespace BottomNavigationViewPager.Fragments
 
             if (Arguments != null)
             {
-                if(Arguments.ContainsKey("title"))
+                if (Arguments.ContainsKey("title"))
                     _title = (string)Arguments.Get("title");
 
                 if (Arguments.ContainsKey("icon"))
@@ -124,6 +124,20 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        /// <summary>
+        /// this fixes the issue where links overflow,
+        /// interfering with the viewpager
+        /// </summary>
+        public static async void FixLinkOverflow()
+        {
+            string _jsLinkFixer = "javascript:(function() { " +
+                "document.getElementById('video-description').style.overflow='hidden'; " + "})()";
+
+            await Task.Delay(5000);
+
+            _wv.LoadUrl(_jsLinkFixer);
+        }
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
@@ -146,10 +160,13 @@ namespace BottomNavigationViewPager.Fragments
                                 "document.getElementById('listing-popular').style.display='none'; " + "})()";
 
                 string _jsSelectTab3 = "javascript:(function() { " +
-                "document.getElementById('listing-subscribed').style.display='block'; " + "})()";
+                                "document.getElementById('listing-subscribed').style.display='block'; " + "})()";
 
                 string _jsHideLabel = "javascript:(function() { " +
-                   "document.getElementsByClassName('tab-scroll-inner')[0].style.display='none'; " + "})()";
+                                "document.getElementsByClassName('tab-scroll-inner')[0].style.display='none'; " + "})()";
+
+                string _jsLinkFixer = "javascript:(function() { " +
+                                "document.getElementById('video-description').style.overflow='hidden'; " + "})()";
 
                 _wv.LoadUrl(_jsHideBanner);
 
@@ -165,7 +182,11 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.LoadUrl(_jsHideLabel);
 
+                _wv.LoadUrl(_jsLinkFixer);
+
                 SetReload();
+
+                FixLinkOverflow();
             }
         }
     }

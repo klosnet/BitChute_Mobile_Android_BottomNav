@@ -91,7 +91,7 @@ namespace BottomNavigationViewPager.Fragments
         public void Pop2Root()
         {
             mysteryInt++;
-            
+
             if (mysteryInt == 6)
             {
                 _wv.LoadUrl(@"https://www.soundcloud.com/vybemasterz/");
@@ -107,9 +107,9 @@ namespace BottomNavigationViewPager.Fragments
                     }
                     catch (Exception ex)
                     {
-                         
+
                     }
-                }   
+                }
                 else
                 {
                     _wv.LoadUrl(@"https://www.bitchute.com/settings/");
@@ -142,13 +142,32 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        /// <summary>
+        /// this fixes the issue where links overflow,
+        /// interfering with the viewpager
+        /// </summary>
+        public static async void FixLinkOverflow()
+        {
+            string _jsLinkFixer = "javascript:(function() { " +
+                "document.getElementById('video-description').style.overflow='hidden'; " + "})()";
+
+            await Task.Delay(5000);
+
+            _wv.LoadUrl(_jsLinkFixer);
+        }
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
             {
-                
+                string _jsLinkFixer = "javascript:(function() { " +
+                        "document.getElementById('video-description').style.overflow='hidden'; " + "})()";
+
+                _wv.LoadUrl(_jsLinkFixer);
 
                 SetReload();
+
+                FixLinkOverflow();
             }
         }
     }

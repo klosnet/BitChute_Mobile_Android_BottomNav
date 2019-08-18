@@ -24,7 +24,8 @@ namespace BottomNavigationViewPager.Fragments
 
         //static MainActivity _main = new MainActivity();
 
-        public static TheFragment1 NewInstance(string title, string icon) {
+        public static TheFragment1 NewInstance(string title, string icon)
+        {
             var fragment = new TheFragment1();
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
@@ -52,6 +53,7 @@ namespace BottomNavigationViewPager.Fragments
 
             _wv = _view.FindViewById<WebView>(Resource.Id.webView1);
 
+
             if (!tabLoaded)
             {
                 _wv.SetWebViewClient(_wvc);
@@ -64,7 +66,7 @@ namespace BottomNavigationViewPager.Fragments
 
                 //this didn't work when I put it here.  strange.. it would disable the setting on 
                 //every other tab
-               // _wv.Settings.MediaPlaybackRequiresUserGesture = false;
+                // _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
                 _wv.LoadUrl(@"https://www.bitchute.com/");
 
@@ -134,27 +136,53 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        /// <summary>
+        /// this fixes the issue where links overflow,
+        /// interfering with the viewpager
+        /// </summary>
+        public static async void FixLinkOverflow()
+        {
+            string _jsLinkFixer = "javascript:(function() { " +
+                "document.getElementById('video-description').style.overflow='hidden'; " + "})()";
+
+            await Task.Delay(5000);
+
+            _wv.LoadUrl(_jsLinkFixer);
+        }
+
+        //this does nothing as of now, but will eventually prevent autoplay
+        //when the user is typing a comment
+        public async void CancelAutoplay()
+        {
+            string _jsPlayCancel = "javascript:(function() { " +
+                "dismiss.click()" + "})()";
+
+            _wv.LoadUrl(_jsPlayCancel);
+        }
+
         //I'll explain this later
         static int _autoInt = 0;
 
         private class ExtWebViewClient : WebViewClient
         {
+            public static string _jsHideBanner = "javascript:(function() { " +
+                "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
+
+            public static string _jsHideBuff = "javascript:(function() { " +
+           "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
+
+            public static string _jsLinkFixer = "javascript:(function() { " +
+            "document.getElementById('video-description').style.overflow='hidden'; " + "})()";
+
             public override void OnPageFinished(WebView _view, string url)
             {
                 base.OnPageFinished(_view, url);
 
-                string _jsHideBanner = "javascript:(function() { " +
-                                "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
-
-                string _jsHideBuff = "javascript:(function() { " +
-               "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
-
-                //string _jsHideBannerC = "javascript:(function() { " +
-                //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
-
                 _wv.LoadUrl(_jsHideBanner);
 
                 _wv.LoadUrl(_jsHideBuff);
+
+                _wv.LoadUrl(_jsLinkFixer);
 
                 //add one to the autoint... for some reason if Tab1 has 
                 //_wv.Settings.MediaPlaybackRequiresUserGesture = false; set then it won't work on the other tabs
@@ -169,6 +197,8 @@ namespace BottomNavigationViewPager.Fragments
                 }
 
                 SetReload();
+
+                FixLinkOverflow();
             }
         }
     }
