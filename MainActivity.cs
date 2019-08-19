@@ -121,13 +121,12 @@ namespace BottomNavigationViewPager
         public void CustomOnScroll()
         {
 
-            _window.AddFlags(_winFlagNotFullscreen);
-
             if (_navTimer != 0)
-                _navTimer = 0;
+                Globals._navtimer = 0;
 
             if (!_navTimeout)
             {
+                _window.AddFlags(_winFlagNotFullscreen);
                 _navigationView.Visibility = ViewStates.Visible;
                 //WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 //WindowManager.LayoutParams.FLAG_FULLSCREEN
@@ -140,6 +139,8 @@ namespace BottomNavigationViewPager
 
         public async void NavBarRemove()
         {
+            Globals._navtimer = 0;
+
             while (!_navHidden)
             {
                 //canceling this for now
@@ -148,8 +149,8 @@ namespace BottomNavigationViewPager
                 //lets see if this is faster
                 await Task.Delay(1000);
 
-                _navTimer++;
-                if (_navTimer == 8)
+                Globals._navtimer++;
+                if (Globals._navtimer >= 8)
                 {
                     _window.ClearFlags(_winFlagNotFullscreen);
                     _navigationView.Visibility = ViewStates.Gone;
