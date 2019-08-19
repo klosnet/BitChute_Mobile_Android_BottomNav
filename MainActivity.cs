@@ -111,8 +111,6 @@ namespace BottomNavigationViewPager
 
         public static bool _navTimeout = false;
 
-        public static int _navTimer = 0;
-
         /// <summary>
         /// listens for scroll events and hides the navbar after x seconds
         /// .. timer resets every time it's called
@@ -121,16 +119,17 @@ namespace BottomNavigationViewPager
         public void CustomOnScroll()
         {
 
-            if (_navTimer != 0)
+            if (Globals._navtimer != 0)
                 Globals._navtimer = 0;
 
             if (!_navTimeout)
             {
+
+                _navigationView.ScaleY = 1.1F;
+
                 _window.AddFlags(_winFlagNotFullscreen);
                 _navigationView.Visibility = ViewStates.Visible;
-                //WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                //WindowManager.LayoutParams.FLAG_FULLSCREEN
-
+                
                 _navHidden = false;
                 NavBarRemove();
                 _navTimeout = true;
@@ -191,7 +190,7 @@ namespace BottomNavigationViewPager
 
         void NavigationView_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
-            _navTimer = 0;
+            Globals._navtimer = 0;
 
             if (_tabSelected == e.Item.Order)
             {
@@ -225,7 +224,7 @@ namespace BottomNavigationViewPager
 
         private void ViewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
         {
-            _navTimer = 0;
+            Globals._navtimer = 0;
 
             _menu = _navigationView.Menu.GetItem(e.Position);
             _navigationView.SelectedItemId = _menu.ItemId;
