@@ -38,6 +38,7 @@ using static Android.Support.Design.Widget.BottomNavigationView;
 using Android.Graphics;
 using System.Threading.Tasks;
 using BottomNavigationViewPager.Classes;
+using Android.Runtime;
 
 //app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
 
@@ -46,7 +47,7 @@ namespace BottomNavigationViewPager
     [Android.App.Activity(Label = "BitChute", Theme = "@style/AppTheme", MainLauncher = true,
         ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize,
         ParentActivity = typeof(MainActivity))]
-        
+
     public class MainActivity : FragmentActivity
     {
         int _tabSelected;
@@ -56,7 +57,13 @@ namespace BottomNavigationViewPager
         IMenuItem _menu;
         Fragment[] _fragments;
 
+        public static Window _window = null;
         public static Globals _globals = new Globals();
+
+        //this removes the statusbar when user isn't touching the app
+        WindowManagerFlags _winflag1 = WindowManagerFlags.Fullscreen;
+
+        WindowManagerFlags _winFlagNotFullscreen = WindowManagerFlags.ForceNotFullscreen;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -67,16 +74,20 @@ namespace BottomNavigationViewPager
             SetContentView(Resource.Layout.Main);
 
             InitializeTabs();
-            
+
             _viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
             _viewPager.PageSelected += ViewPager_PageSelected;
             _viewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
-			
+
             _navigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
             RemoveShiftMode(_navigationView);
             _navigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
 
             _viewPager.OffscreenPageLimit = 4;
+
+            _window = this.Window;
+
+            var _test = _window;
         }
 
         TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
@@ -109,12 +120,18 @@ namespace BottomNavigationViewPager
         /// </summary>
         public void CustomOnScroll()
         {
+
+            _window.AddFlags(_winFlagNotFullscreen);
+
             if (_navTimer != 0)
-            _navTimer = 0;
+                _navTimer = 0;
 
             if (!_navTimeout)
             {
                 _navigationView.Visibility = ViewStates.Visible;
+                //WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                //WindowManager.LayoutParams.FLAG_FULLSCREEN
+
                 _navHidden = false;
                 NavBarRemove();
                 _navTimeout = true;
@@ -134,18 +151,21 @@ namespace BottomNavigationViewPager
                 _navTimer++;
                 if (_navTimer == 8)
                 {
+                    _window.ClearFlags(_winFlagNotFullscreen);
                     _navigationView.Visibility = ViewStates.Gone;
+                    _window.AddFlags(_winflag1);
                     _navTimeout = false;
                     _navHidden = true;
                 }
             }
         }
 
+
         public override bool OnKeyDown(Android.Views.Keycode keyCode, KeyEvent e)
         {
             if (e.KeyCode == Android.Views.Keycode.Back)
             {
-                switch(_viewPager.CurrentItem)
+                switch (_viewPager.CurrentItem)
                 {
                     case 0:
                         _fm1.WebViewGoBack();
@@ -166,7 +186,7 @@ namespace BottomNavigationViewPager
             }
             return false;
         }
-        
+
 
         void NavigationView_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
@@ -199,7 +219,7 @@ namespace BottomNavigationViewPager
                 //_menu = _navigationView.Menu.GetItem(e2.Position);
                 //_navigationView.SelectedItemId = _menu.ItemId;
                 _viewPager.SetCurrentItem(e.Item.Order, true);
-            } 
+            }
         }
 
         private void ViewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
@@ -218,47 +238,47 @@ namespace BottomNavigationViewPager
 
         void RemoveShiftMode(BottomNavigationView view)
         {
-            var menuView = (BottomNavigationMenuView) view.GetChildAt(0);
+            var menuView = (BottomNavigationMenuView)view.GetChildAt(0);
 
             try
             {
                 var shiftingMode = menuView.Class.GetDeclaredField("mShiftingMode");
-				shiftingMode.Accessible = true;
-				shiftingMode.SetBoolean(menuView, false);
-				shiftingMode.Accessible = false;
+                shiftingMode.Accessible = true;
+                shiftingMode.SetBoolean(menuView, false);
+                shiftingMode.Accessible = false;
 
-				for (int i = 0; i < menuView.ChildCount; i++)
-				{
-					var item = (BottomNavigationItemView)menuView.GetChildAt(i);
-					item.SetShiftingMode(false);
-					// set once again checked value, so view will be updated
-					item.SetChecked(item.ItemData.IsChecked);
-				}
+                for (int i = 0; i < menuView.ChildCount; i++)
+                {
+                    var item = (BottomNavigationItemView)menuView.GetChildAt(i);
+                    item.SetShiftingMode(false);
+                    // set once again checked value, so view will be updated
+                    item.SetChecked(item.ItemData.IsChecked);
+                }
             }
             catch (System.Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine((ex.InnerException??ex).Message);
+                System.Diagnostics.Debug.WriteLine((ex.InnerException ?? ex).Message);
             }
         }
 
         public override void OnWindowFocusChanged(bool hasFocus)
         {
             Globals._bkgrd = true;
-            
-            while (Globals._bkgrd)
+
+            while (_globals.IsInBkGrd())
             {
                 Task.Delay(1200);
 
-                _globals.IsInBkGrd();
+                Globals._bkgrd = _globals.IsInBkGrd();
             }
         }
 
         protected override void OnDestroy()
         {
-			_viewPager.PageSelected -= ViewPager_PageSelected;
+            _viewPager.PageSelected -= ViewPager_PageSelected;
             _navigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
             base.OnDestroy();
         }
-     }
+    }
 }
 
