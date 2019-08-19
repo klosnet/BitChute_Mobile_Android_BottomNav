@@ -124,9 +124,7 @@ namespace BottomNavigationViewPager
 
             if (!_navTimeout)
             {
-
                 _navigationView.ScaleY = 1.1F;
-
                 _window.AddFlags(_winFlagNotFullscreen);
                 _navigationView.Visibility = ViewStates.Visible;
                 
