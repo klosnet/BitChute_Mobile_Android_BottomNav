@@ -86,8 +86,6 @@ namespace BottomNavigationViewPager
             _viewPager.OffscreenPageLimit = 4;
 
             _window = this.Window;
-
-            var _test = _window;
         }
 
         TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
