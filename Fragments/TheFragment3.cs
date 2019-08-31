@@ -8,6 +8,7 @@ using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using static Android.Views.View;
+using static BottomNavigationViewPager.Classes.Globals;
 
 namespace BottomNavigationViewPager.Fragments
 {
@@ -124,48 +125,45 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        /// <summary>
+        /// this fixes the issue where links overflow,
+        /// interfering with the viewpager
+        /// </summary>
+        public static async void FixLinkOverflow()
+        {
+            string _jsLinkFixer = "javascript:(function() { " +
+                "document.getElementById('video-description').style.overflow='hidden'; " + "})()";
+
+            await Task.Delay(5000);
+
+            _wv.LoadUrl(_jsLinkFixer);
+        }
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
             {
                 base.OnPageFinished(view, url);
+                
+                _wv.LoadUrl(JavascriptCommands._jsHideBanner);
 
-                string _jsHideBanner = "javascript:(function() { " +
-                                "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
+                _wv.LoadUrl(JavascriptCommands._jsHideBuff);
 
-                string _jsHideBuff = "javascript:(function() { " +
-                                "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
+                _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
 
-                string _jsHideCarousel = "javascript:(function() { " +
-                                "document.getElementById('carousel').style.display='none'; " + "})()";
+                _wv.LoadUrl(JavascriptCommands._jsSelectTab);
 
-                string _jsSelectTab = "javascript:(function() { " +
-                                "document.getElementById('listing-all').style.display='none'; " + "})()";
+                _wv.LoadUrl(JavascriptCommands._jsSelectTab2);
 
-                string _jsSelectTab2 = "javascript:(function() { " +
-                                "document.getElementById('listing-popular').style.display='none'; " + "})()";
+                _wv.LoadUrl(JavascriptCommands._jsSelectTab3);
 
-                string _jsSelectTab3 = "javascript:(function() { " +
-                "document.getElementById('listing-subscribed').style.display='block'; " + "})()";
+                _wv.LoadUrl(JavascriptCommands._jsHideLabel);
 
-                string _jsHideLabel = "javascript:(function() { " +
-                   "document.getElementsByClassName('tab-scroll-inner')[0].style.display='none'; " + "})()";
-
-                _wv.LoadUrl(_jsHideBanner);
-
-                _wv.LoadUrl(_jsHideBuff);
-
-                _wv.LoadUrl(_jsHideCarousel);
-
-                _wv.LoadUrl(_jsSelectTab);
-
-                _wv.LoadUrl(_jsSelectTab2);
-
-                _wv.LoadUrl(_jsSelectTab3);
-
-                _wv.LoadUrl(_jsHideLabel);
+                _wv.LoadUrl(JavascriptCommands._jsLinkFixer);
 
                 SetReload();
+
+                FixLinkOverflow();
             }
         }
     }

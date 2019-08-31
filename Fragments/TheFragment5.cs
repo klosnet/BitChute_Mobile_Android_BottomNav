@@ -6,6 +6,7 @@ using Android.Webkit;
 using Android.Widget;
 using System;
 using System.Threading.Tasks;
+using static BottomNavigationViewPager.Classes.Globals;
 
 namespace BottomNavigationViewPager.Fragments
 {
@@ -15,6 +16,9 @@ namespace BottomNavigationViewPager.Fragments
         string _icon;
 
         public static WebView _wv;
+        public static View _view;
+        public static ViewGroup _vg;
+        public static LayoutInflater _inflater;
 
         bool tabLoaded = false;
 
@@ -43,7 +47,7 @@ namespace BottomNavigationViewPager.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
+            _view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
 
             _wv = _view.FindViewById<WebView>(Resource.Id.webView5);
 
@@ -68,6 +72,12 @@ namespace BottomNavigationViewPager.Fragments
             return _view;
         }
 
+        public void ShowAppSettingsView()
+        {
+            _view = _inflater.Inflate(Resource.Layout.AppSettingsFragmentLayout, _vg, false);
+            
+        }
+        
         public static MainActivity _main = new MainActivity();
 
         public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
@@ -142,13 +152,27 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        /// <summary>
+        /// this fixes the issue where links overflow,
+        /// interfering with the viewpager
+        /// </summary>
+        public static async void FixLinkOverflow()
+        {
+            await Task.Delay(5000);
+
+            _wv.LoadUrl(JavascriptCommands._jsLinkFixer);
+        }
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
             {
-                
+
+                _wv.LoadUrl(JavascriptCommands._jsLinkFixer);
 
                 SetReload();
+
+                FixLinkOverflow();
             }
         }
     }

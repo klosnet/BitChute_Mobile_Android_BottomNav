@@ -118,8 +118,37 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        /// <summary>
+        /// this fixes the issue where links overflow,
+        /// interfering with the viewpager
+        /// </summary>
+        public static async void FixLinkOverflow()
+        {
+            string _jsLinkFixer = "javascript:(function() { " +
+                "document.getElementById('video-description').style.overflow='hidden'; " + "})()";
+
+            await Task.Delay(5000);
+
+            _wv.LoadUrl(_jsLinkFixer);
+        }
+
+        public void ExtendedLoadUrl(string url)
+        {
+            _wv.LoadUrl(url);
+        }
+
         private class ExtWebViewClient : WebViewClient
         {
+            public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
+            {
+                return base.ShouldOverrideUrlLoading(view, request);
+            }
+
+            public override bool ShouldOverrideUrlLoading(WebView view, string url)
+            {
+                return base.ShouldOverrideUrlLoading(view, url);
+            }
+
             public override void OnPageFinished(WebView view, string url)
             {
                 base.OnPageFinished(view, url);
@@ -130,6 +159,9 @@ namespace BottomNavigationViewPager.Fragments
                 string _jsHideBuff = "javascript:(function() { " +
                                 "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
 
+                string _jsLinkFixer = "javascript:(function() { " +
+                                "document.getElementById('video-description').style.overflow='hidden'; " + "})()";
+
                 //string _jsHideBannerC = "javascript:(function() { " +
                 //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
 
@@ -137,7 +169,11 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.LoadUrl(_jsHideBuff);
 
+                _wv.LoadUrl(_jsLinkFixer);
+
                 SetReload();
+
+                FixLinkOverflow();
             }
         }
     }

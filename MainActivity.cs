@@ -38,6 +38,8 @@ using static Android.Support.Design.Widget.BottomNavigationView;
 using Android.Graphics;
 using System.Threading.Tasks;
 using BottomNavigationViewPager.Classes;
+using Android.Runtime;
+using System;
 
 //app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
 
@@ -46,7 +48,7 @@ namespace BottomNavigationViewPager
     [Android.App.Activity(Label = "BitChute", Theme = "@style/AppTheme", MainLauncher = true,
         ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize,
         ParentActivity = typeof(MainActivity))]
-        
+
     public class MainActivity : FragmentActivity
     {
         int _tabSelected;
@@ -56,10 +58,19 @@ namespace BottomNavigationViewPager
         IMenuItem _menu;
         Fragment[] _fragments;
 
+        public static Window _window = null;
         public static Globals _globals = new Globals();
+        public static AppSettings _appSettings = new AppSettings();
+
+        //this removes the statusbar when user isn't touching the app
+        WindowManagerFlags _winflag1 = WindowManagerFlags.Fullscreen;
+
+        WindowManagerFlags _winFlagNotFullscreen = WindowManagerFlags.ForceNotFullscreen;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            //call the onloaded method to assign settings from file
+            _appSettings.OnAppLoaded();
 
             base.OnCreate(savedInstanceState);
 
@@ -67,23 +78,26 @@ namespace BottomNavigationViewPager
             SetContentView(Resource.Layout.Main);
 
             InitializeTabs();
-            
+
             _viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
             _viewPager.PageSelected += ViewPager_PageSelected;
             _viewPager.Adapter = new ViewPagerAdapter(SupportFragmentManager, _fragments);
-			
+
             _navigationView = FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
             RemoveShiftMode(_navigationView);
             _navigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
 
             _viewPager.OffscreenPageLimit = 4;
+
+            _window = this.Window;
         }
 
-        TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
-        TheFragment2 _fm2 = TheFragment2.NewInstance("Subs", "tab_subs");
-        TheFragment3 _fm3 = TheFragment3.NewInstance("Feed", "tab_playlist");
-        TheFragment4 _fm4 = TheFragment4.NewInstance("MyChannel", "tab_mychannel");
-        TheFragment5 _fm5 = TheFragment5.NewInstance("Settings", "tab_home");
+        public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
+        public static TheFragment2 _fm2 = TheFragment2.NewInstance("Subs", "tab_subs");
+        public static TheFragment3 _fm3 = TheFragment3.NewInstance("Feed", "tab_playlist");
+        public static TheFragment4 _fm4 = TheFragment4.NewInstance("MyChannel", "tab_mychannel");
+        public static TheFragment5 _fm5 = TheFragment5.NewInstance("Settings", "tab_home");
+        readonly AppSettings _asfm = AppSettings.NewInstance("AppSettings", "tab_home");
 
         void InitializeTabs()
         {
@@ -100,8 +114,6 @@ namespace BottomNavigationViewPager
 
         public static bool _navTimeout = false;
 
-        public static int _navTimer = 0;
-
         /// <summary>
         /// listens for scroll events and hides the navbar after x seconds
         /// .. timer resets every time it's called
@@ -109,12 +121,18 @@ namespace BottomNavigationViewPager
         /// </summary>
         public void CustomOnScroll()
         {
-            if (_navTimer != 0)
-            _navTimer = 0;
+            if (Globals._navtimer != 0)
+                Globals._navtimer = 0;
 
             if (!_navTimeout)
             {
+                _window.AddFlags(_winFlagNotFullscreen);
                 _navigationView.Visibility = ViewStates.Visible;
+
+                _navigationView.ScaleY = 1.1F;
+                //WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                //WindowManager.LayoutParams.FLAG_FULLSCREEN
+
                 _navHidden = false;
                 NavBarRemove();
                 _navTimeout = true;
@@ -123,6 +141,8 @@ namespace BottomNavigationViewPager
 
         public async void NavBarRemove()
         {
+            Globals._navtimer = 0;
+
             while (!_navHidden)
             {
                 //canceling this for now
@@ -131,10 +151,12 @@ namespace BottomNavigationViewPager
                 //lets see if this is faster
                 await Task.Delay(1000);
 
-                _navTimer++;
-                if (_navTimer == 8)
+                Globals._navtimer++;
+                if (Globals._navtimer >= 8)
                 {
+                    _window.ClearFlags(_winFlagNotFullscreen);
                     _navigationView.Visibility = ViewStates.Gone;
+                    _window.AddFlags(_winflag1);
                     _navTimeout = false;
                     _navHidden = true;
                 }
@@ -143,9 +165,11 @@ namespace BottomNavigationViewPager
 
         public override bool OnKeyDown(Android.Views.Keycode keyCode, KeyEvent e)
         {
+            _fm1.CancelAutoplay();
+
             if (e.KeyCode == Android.Views.Keycode.Back)
             {
-                switch(_viewPager.CurrentItem)
+                switch (_viewPager.CurrentItem)
                 {
                     case 0:
                         _fm1.WebViewGoBack();
@@ -166,11 +190,10 @@ namespace BottomNavigationViewPager
             }
             return false;
         }
-        
 
         void NavigationView_NavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
-            _navTimer = 0;
+            Globals._navtimer = 0;
 
             if (_tabSelected == e.Item.Order)
             {
@@ -199,64 +222,127 @@ namespace BottomNavigationViewPager
                 //_menu = _navigationView.Menu.GetItem(e2.Position);
                 //_navigationView.SelectedItemId = _menu.ItemId;
                 _viewPager.SetCurrentItem(e.Item.Order, true);
-            } 
+            }
         }
 
         private void ViewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
         {
-            _navTimer = 0;
+            Globals._navtimer = 0;
 
             _menu = _navigationView.Menu.GetItem(e.Position);
             _navigationView.SelectedItemId = _menu.ItemId;
 
             _tabSelected = _viewPager.CurrentItem;
+
+            CustomOnScroll();
+
+            Globals._currentTab = _tabSelected;
         }
 
         //BottomNavigationView.NavigationItemReselectedEventArgs
 
         void RemoveShiftMode(BottomNavigationView view)
         {
-            var menuView = (BottomNavigationMenuView) view.GetChildAt(0);
+            var menuView = (BottomNavigationMenuView)view.GetChildAt(0);
 
             try
             {
                 var shiftingMode = menuView.Class.GetDeclaredField("mShiftingMode");
-				shiftingMode.Accessible = true;
-				shiftingMode.SetBoolean(menuView, false);
-				shiftingMode.Accessible = false;
+                shiftingMode.Accessible = true;
+                shiftingMode.SetBoolean(menuView, false);
+                shiftingMode.Accessible = false;
 
-				for (int i = 0; i < menuView.ChildCount; i++)
-				{
-					var item = (BottomNavigationItemView)menuView.GetChildAt(i);
-					item.SetShiftingMode(false);
-					// set once again checked value, so view will be updated
-					item.SetChecked(item.ItemData.IsChecked);
-				}
+                for (int i = 0; i < menuView.ChildCount; i++)
+                {
+                    var item = (BottomNavigationItemView)menuView.GetChildAt(i);
+                    item.SetShiftingMode(false);
+                    // set once again checked value, so view will be updated
+                    item.SetChecked(item.ItemData.IsChecked);
+
+                    if (i == 4)
+                    {
+                        item.SetOnLongClickListener(new TabLongClick());
+                        _navigationView.SetOnLongClickListener(new TabLongClick());
+                    }
+                }
             }
             catch (System.Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine((ex.InnerException??ex).Message);
+                System.Diagnostics.Debug.WriteLine((ex.InnerException ?? ex).Message);
+            }
+        }
+
+        /// <summary>
+        /// this overrides the selected tab and switches to the int chosen
+        /// where 0 = the tab farthest left going up by one each step right.
+        /// It also automatically
+        /// </summary>
+        /// <param name="tab"></param>
+        public void SelectedTabOverride(int tab)
+        {
+            _viewPager.SetCurrentItem(tab, true);
+            _menu = _navigationView.Menu.GetItem(tab);
+            _navigationView.SelectedItemId = tab;
+            Globals._currentTab = tab;
+        }
+
+        public void ExtOnLongClick()
+        {
+            if (Globals._currentTab == 4)
+            {
+                _fm5.ShowAppSettingsView();
             }
         }
 
         public override void OnWindowFocusChanged(bool hasFocus)
         {
-            Globals._bkgrd = true;
-            
-            while (Globals._bkgrd)
+            while (_globals.IsInBkGrd())
             {
                 Task.Delay(1200);
 
-                _globals.IsInBkGrd();
+                Globals._bkgrd = _globals.IsInBkGrd();
             }
         }
 
         protected override void OnDestroy()
         {
-			_viewPager.PageSelected -= ViewPager_PageSelected;
+            _viewPager.PageSelected -= ViewPager_PageSelected;
             _navigationView.NavigationItemSelected -= NavigationView_NavigationItemSelected;
             base.OnDestroy();
         }
-     }
+    }
+
+
+
+    internal class TabLongClick : Java.Lang.Object, View.IOnLongClickListener
+    {
+        MainActivity _main = new MainActivity();
+
+        public static TheFragment5 _fm5 = new TheFragment5();
+
+        public IntPtr Handle => this.Handle;
+
+        public void Dispose()
+        {
+            //nothing
+        }
+
+        public bool OnLongClick(View v)
+        {
+            switch (Globals._currentTab)
+            {
+                case 0:
+                    //nothing yet
+                    break;
+                case 4:
+                    _main.SelectedTabOverride(5);
+                    //_fm5.ShowAppSettingsView();
+                    break;
+            }
+            _main.ExtOnLongClick();
+
+            return true;
+        }
+    }
 }
 

@@ -41,4 +41,17 @@
       android:title="Settings"
       android:icon="@drawable/tab_settings"
       app:showAsAction="always" />
+
+    <item
+      android:id="@+id/menu_appsettings"
+      android:orderInCategory="5"
+      android:visibility="gone"
+      android:layout_width="0px"
+      android:layout_height="0px"
+      android:enabled="true"
+      android:title="AppSettings"
+      android:icon="@drawable/tab_settings"
+      app:showAsAction="always" />
+
+
 </menu>
