@@ -263,7 +263,7 @@ namespace BottomNavigationViewPager.Fragments
 
                 if (!AppSettings._tab1FeaturedOn)
                 {
-                    _wv.LoadUrl(JavascriptCommands.);
+                    _wv.LoadUrl(JavascriptCommands._jsHideCarousel);
                 }
 
                 //add one to the autoint... for some reason if Tab1 has 
