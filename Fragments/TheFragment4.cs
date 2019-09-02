@@ -4,6 +4,7 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
+using BottomNavigationViewPager.Classes;
 using System.Threading.Tasks;
 
 namespace BottomNavigationViewPager.Fragments
@@ -123,19 +124,10 @@ namespace BottomNavigationViewPager.Fragments
             public override void OnPageFinished(WebView view, string url)
             {
                 base.OnPageFinished(view, url);
+                
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
 
-                string _jsHideBanner = "javascript:(function() { " +
-                                "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
-
-                string _jsHideBuff = "javascript:(function() { " +
-               "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
-
-                //string _jsHideBannerC = "javascript:(function() { " +
-                //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
-
-                _wv.LoadUrl(_jsHideBanner);
-
-                _wv.LoadUrl(_jsHideBuff);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
 
                 SetReload();
             }

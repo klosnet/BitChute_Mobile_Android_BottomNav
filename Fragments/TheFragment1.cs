@@ -4,6 +4,8 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
+using BottomNavigationViewPager.Classes;
+using System;
 using System.Threading.Tasks;
 using static Android.Views.View;
 
@@ -72,11 +74,69 @@ namespace BottomNavigationViewPager.Fragments
             }
 
             _wv.SetOnScrollChangeListener(new ExtScrollListener());
+            //_wv.Touch += ViewOnTouch;
 
             return _view;
         }
 
+        public void OnSettingsChanged(object[] settings)
+        {
+            _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
+
+            if (Convert.ToBoolean(settings[3]))
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+
+            }
+
+            if (AppSettings._zoomControl)
+            {
+                _wv.Settings.BuiltInZoomControls = true;
+                _wv.Settings.DisplayZoomControls = false;
+            }
+            else
+            {
+                _wv.Settings.BuiltInZoomControls = false;
+            }
+        }
+
+        /// <summary>
+        /// gotta instantiate that MainActivity _maing
+        ///compiler is all about that
+        /// </summary>
         public static MainActivity _main = new MainActivity();
+
+        //public bool OnTouch(object sender, MotionEvent e)
+        //{
+        //    return false;
+        //}
+
+        //private void ViewOnTouch(object sender, View.TouchEventArgs touchEventArgs)
+        //{
+        //    var test = "yo";
+
+        //   // _wv.ComputeScroll();
+        //    //Globals._wvHeight = _wv.ContentHeight;
+
+        //    //string message;
+        //    switch (touchEventArgs.Event.Action & MotionEventActions.Mask)
+        //    {
+
+        //        case MotionEventActions.Down:
+        //        case MotionEventActions.Move:
+        //            _main.CustomOnScroll();
+        //            break;
+
+        //        case MotionEventActions.Up:
+        //            //_main.HideNavBarAfterDelay();
+        //            break;
+
+        //        default:
+        //            break;
+        //    }
+
+            
+        //}
 
         public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
         {
@@ -142,19 +202,12 @@ namespace BottomNavigationViewPager.Fragments
             public override void OnPageFinished(WebView _view, string url)
             {
                 base.OnPageFinished(_view, url);
-
-                string _jsHideBanner = "javascript:(function() { " +
-                                "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
-
-                string _jsHideBuff = "javascript:(function() { " +
-               "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
-
                 //string _jsHideBannerC = "javascript:(function() { " +
                 //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
 
-                _wv.LoadUrl(_jsHideBanner);
+                _wv.LoadUrl(Globals.JavascriptCommands. _jsHideBanner);
 
-                _wv.LoadUrl(_jsHideBuff);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
 
                 //add one to the autoint... for some reason if Tab1 has 
                 //_wv.Settings.MediaPlaybackRequiresUserGesture = false; set then it won't work on the other tabs

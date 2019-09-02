@@ -7,6 +7,7 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
+using BottomNavigationViewPager.Classes;
 using static Android.Views.View;
 
 namespace BottomNavigationViewPager.Fragments
@@ -72,6 +73,36 @@ namespace BottomNavigationViewPager.Fragments
             return _view;
         }
 
+        public void OnSettingsChanged(object[] settings)
+        {
+            _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
+
+            if (Convert.ToBoolean(settings[3]))
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+
+            }
+
+            if (AppSettings._zoomControl)
+            {
+                _wv.Settings.BuiltInZoomControls = true;
+                _wv.Settings.DisplayZoomControls = false;
+            }
+            else
+            {
+                _wv.Settings.BuiltInZoomControls = false;
+            }
+
+            if (AppSettings._tab3Hide)
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+
         public static MainActivity _main = new MainActivity();
 
         public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
@@ -130,41 +161,22 @@ namespace BottomNavigationViewPager.Fragments
             {
                 base.OnPageFinished(view, url);
 
-                string _jsHideBanner = "javascript:(function() { " +
-                                "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
 
-                string _jsHideBuff = "javascript:(function() { " +
-                                "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
 
-                string _jsHideCarousel = "javascript:(function() { " +
-                                "document.getElementById('carousel').style.display='none'; " + "})()";
+                if (AppSettings._tab3Hide)
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
 
-                string _jsSelectTab = "javascript:(function() { " +
-                                "document.getElementById('listing-all').style.display='none'; " + "})()";
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab);
 
-                string _jsSelectTab2 = "javascript:(function() { " +
-                                "document.getElementById('listing-popular').style.display='none'; " + "})()";
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab2);
 
-                string _jsSelectTab3 = "javascript:(function() { " +
-                "document.getElementById('listing-subscribed').style.display='block'; " + "})()";
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
 
-                string _jsHideLabel = "javascript:(function() { " +
-                   "document.getElementsByClassName('tab-scroll-inner')[0].style.display='none'; " + "})()";
-
-                _wv.LoadUrl(_jsHideBanner);
-
-                _wv.LoadUrl(_jsHideBuff);
-
-                _wv.LoadUrl(_jsHideCarousel);
-
-                _wv.LoadUrl(_jsSelectTab);
-
-                _wv.LoadUrl(_jsSelectTab2);
-
-                _wv.LoadUrl(_jsSelectTab3);
-
-                _wv.LoadUrl(_jsHideLabel);
-
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                }
                 SetReload();
             }
         }

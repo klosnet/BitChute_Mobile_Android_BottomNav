@@ -10,8 +10,9 @@ namespace BottomNavigationViewPager.Classes
 
 
         public static bool _setWebView { get; set; }
+        public static bool _navIsTimingOut { get; set; }
+        public static int _wvHeight { get; set; }
 
-        
 
         public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
              .Context.GetSystemService(Context.ActivityService);
@@ -66,5 +67,60 @@ namespace BottomNavigationViewPager.Classes
             return _bkgrd;
         }
 
+
+        /// <summary>
+        /// this class contains javascript commands in the form of strings that
+        /// can be run via LoadUrl
+        /// </summary>
+        public class JavascriptCommands
+        {
+            /// <summary>
+            /// fixes the link overflow issue
+            /// </summary>
+            public static string _jsLinkFixer = "javascript:(function() { " +
+                 "document.getElementById('video-description').style.overflow='hidden'; " + "})()";
+
+            /// <summary>
+            /// hides the static banner
+            /// </summary>
+            public static string _jsHideBanner = "javascript:(function() { " +
+                 "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
+
+            /// <summary>
+            /// hides the banner buffer
+            /// </summary>
+            public static string _jsHideBuff = "javascript:(function() { " +
+                "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
+
+            /// <summary>
+            /// hides the carousel aka featured creators
+            /// </summary>
+            public static string _jsHideCarousel = "javascript:(function() { " +
+                "document.getElementById('carousel').style.display='none'; " + "})()";
+
+            /// <summary>
+            /// hides the listing all element
+            /// </summary>
+            public static string _jsSelectTab = "javascript:(function() { " +
+                            "document.getElementById('listing-all').style.display='none'; " + "})()";
+
+            /// <summary>
+            /// hides the popular listings
+            /// </summary>
+            public static string _jsSelectTab2 = "javascript:(function() { " +
+                            "document.getElementById('listing-popular').style.display='none'; " + "})()";
+            
+            /// <summary>
+            /// shows the subscribed feed
+            /// </summary>
+            public static string _jsSelectTab3 = "javascript:(function() { " +
+                            "document.getElementById('listing-subscribed').style.display='block'; " + "})()";
+
+            /// <summary>
+            /// hides the tab scroll inner element
+            /// </summary>
+            public static string _jsHideLabel = "javascript:(function() { " +
+                            "document.getElementsByClassName('tab-scroll-inner')[0].style.display='none'; " + "})()";
+        }
     }
 }

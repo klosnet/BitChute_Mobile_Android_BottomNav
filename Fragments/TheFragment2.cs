@@ -4,6 +4,8 @@ using Android.Support.V4.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
+using BottomNavigationViewPager.Classes;
+using System;
 using System.Threading.Tasks;
 
 namespace BottomNavigationViewPager.Fragments
@@ -66,6 +68,21 @@ namespace BottomNavigationViewPager.Fragments
             return _view;
         }
 
+        public void OnSettingsChanged(object[] settings)
+        {
+            _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
+
+            if (AppSettings._zoomControl)
+            {
+                _wv.Settings.BuiltInZoomControls = true;
+                _wv.Settings.DisplayZoomControls = false;
+            }
+            else
+            {
+                _wv.Settings.BuiltInZoomControls = false;
+            }
+        }
+
         public static MainActivity _main = new MainActivity();
 
         public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
@@ -124,18 +141,9 @@ namespace BottomNavigationViewPager.Fragments
             {
                 base.OnPageFinished(view, url);
 
-                string _jsHideBanner = "javascript:(function() { " +
-                                "document.getElementById('nav-top-menu').style.display='none'; " + "})()";
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
 
-                string _jsHideBuff = "javascript:(function() { " +
-                                "document.getElementById('nav-menu-buffer').style.display='none'; " + "})()";
-
-                //string _jsHideBannerC = "javascript:(function() { " +
-                //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
-
-                _wv.LoadUrl(_jsHideBanner);
-
-                _wv.LoadUrl(_jsHideBuff);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
 
                 SetReload();
             }
