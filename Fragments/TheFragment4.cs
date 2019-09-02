@@ -5,6 +5,8 @@ using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using BottomNavigationViewPager.Classes;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BottomNavigationViewPager.Fragments
@@ -15,6 +17,7 @@ namespace BottomNavigationViewPager.Fragments
         string _icon;
 
         protected static WebView _wv;
+        public static string _url = "https://www.bitchute.com/profile";
 
         bool tabLoaded = false;
 
@@ -57,7 +60,7 @@ namespace BottomNavigationViewPager.Fragments
             }
             else
             {
-                _wv.LoadUrl(@"https://www.bitchute.com/profile/");
+                _wv.LoadUrl(_url);
             }
         }
 
@@ -73,7 +76,9 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
-                _wv.LoadUrl(@"https://www.bitchute.com/profile/");
+                _wv.Settings.DisplayZoomControls = false;
+
+                _wv.LoadUrl(_url);
 
                 _wv.Settings.JavaScriptEnabled = true;
 
@@ -119,6 +124,48 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        public void OnSettingsChanged(List<object> settings)
+        {
+            _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
+
+            if (Convert.ToBoolean(settings[3]))
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+
+            }
+            if (AppSettings._fanMode)
+            {
+
+            }
+
+            if (AppSettings._zoomControl)
+            {
+                _wv.Settings.BuiltInZoomControls = true;
+                _wv.Settings.DisplayZoomControls = false;
+            }
+            else
+            {
+                _wv.Settings.BuiltInZoomControls = false;
+            }
+
+            if (AppSettings._tab4OverridePreference == "feed" && AppSettings._tab3Hide)
+            {
+                if (AppSettings._tab3Hide)
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab2);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                }
+            }
+        }
+
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
@@ -128,6 +175,11 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
+
+                if (!AppSettings._tab1FeaturedOn)
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+                }
 
                 SetReload();
             }

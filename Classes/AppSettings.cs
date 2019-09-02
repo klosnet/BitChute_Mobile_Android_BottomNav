@@ -23,29 +23,37 @@ namespace BottomNavigationViewPager.Fragments
 
         public static View _view = TheFragment5._view;
 
-        public static List<string> _tab4OverrideStringList;
-        public static List<string> _tab5OverrideStringList;
+        public static List<string> _tab4OverrideStringList = new List<string>();
+        public static List<string> _tab5OverrideStringList = new List<string>();
+        public static List<string> _tabOverrideStringList = new List<string>();
 
-        public static List<object> _totalSettingList;
+        public static Spinner _tab4OverrideSpinner;
+        public static Spinner _tab5OverideSpinner;
 
-        public static List<string> _tabOverrideStringList
+        /// <summary>
+        /// bool _zoomControl 
+        /// bool _fanMode 
+        /// bool _tab3Hide 
+        /// bool _tab1FeaturedOn 
+        /// bool _settingsTabOverride 
+        /// </summary>
+        public static List<object> _totalSettingList = new List<object>();
+
+        /// <summary>
+        /// 0 = subs, 1 = feed, 2 = explore, 3 = home
+        /// </summary>
+        public List<string> GetTabOverrideStringList()
         {
-            get
-            {
                 string s = "Subs";
                 string f = "Feed";
                 string e = "Explore";
                 string h = "Home";
+                _tabOverrideStringList.Clear();
                 _tabOverrideStringList.Add(s);
                 _tabOverrideStringList.Add(f);
                 _tabOverrideStringList.Add(e);
                 _tabOverrideStringList.Add(h);
                 return _tabOverrideStringList;
-            }
-            set
-            {
-                //nothing atm
-            }
         }
 
         public AppSettings GetAppSettings()
@@ -215,8 +223,8 @@ namespace BottomNavigationViewPager.Fragments
         /// <returns></returns>
         public void OnViewCreation()
         {
-            //_tab4OverrideStringList = _tabOverrideStringList;
-            //_tab5OverrideStringList = _tabOverrideStringList;
+            _tab4OverrideStringList = _tabOverrideStringList;
+            _tab5OverrideStringList = _tabOverrideStringList;
 
             _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
             _prefEditor = _prefs.Edit();
@@ -321,9 +329,16 @@ namespace BottomNavigationViewPager.Fragments
             prefEditor.PutBoolean("t1featured", _tab1FeaturedOn);
             prefEditor.PutBoolean("settingstaboverride", _settingsTabOverride);
             prefEditor.Commit();
+
+            _totalSettingList.Clear();
+
+            _totalSettingList.Add(_zoomControl);
+            _totalSettingList.Add(_fanMode);
+            _totalSettingList.Add(_tab3Hide);
+            _totalSettingList.Add(_tab1FeaturedOn);
+            _totalSettingList.Add(_settingsTabOverride);
             
-            object[] _settingsArray = { _zoomControl, _fanMode, _tab3Hide, _tab1FeaturedOn, _settingsTabOverride };
-            _main.OnSettingsChanged(_settingsArray);
+            _main.OnSettingsChanged(_totalSettingList);
         }
     }
 }

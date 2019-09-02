@@ -271,23 +271,17 @@ namespace BottomNavigationViewPager
         /// forwards the setting object array to all fragments
         /// </summary>
         /// <param name="oa"></param>
-        public void OnSettingsChanged(object[] oa)
+        public void OnSettingsChanged(List<object> oa)
         {
+            if (AppSettings._fanMode)
+            {
+                //_main.TabDetailChanger();
+            }
             _fm1.OnSettingsChanged(oa);
-        //    _fm2.OnSettingsChanged(oa);
-        //    _fm3.OnSettingsChanged(oa);
-        //    _fm4.OnSettingsChanged(oa);
-        //    _fm5.OnSettingsChanged(oa);
-        }
-
-        /// <summary>
-        /// Listen for long click events on the navbar
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void NavigationViewLongClickListener(object sender, LongClickEventArgs e)
-        {
-            _fm5.ShowAppSettingsMenu();
+            _fm2.OnSettingsChanged(oa);
+            _fm3.OnSettingsChanged(oa);
+            _fm4.OnSettingsChanged(oa);
+            _fm5.OnSettingsChanged(oa);
         }
 
         /// <summary>
@@ -312,27 +306,60 @@ namespace BottomNavigationViewPager
                     {
                         if (changeDetails == "" || changeDetails == null)
                         {
-                            _navViewItemList[3].SetTitle("Subs");
+                            _navViewItemList[tab].SetTitle("Subs");
+                            TheFragment4._url = Globals.URLs._subspage;
                         }
                         if (changeDetails == "subs")
                         {
-                            _navViewItemList[3].SetTitle("Subs");
+                            _navViewItemList[tab].SetTitle("Subs");
+                            TheFragment4._url = Globals.URLs._subspage;
                         }
                         if (changeDetails == "feed")
                         {
-                            _navViewItemList[3].SetTitle("Feed");
+                            _navViewItemList[tab].SetTitle("Feed");
+                            TheFragment4._url = Globals.URLs._homepage;
                         }
                         if (changeDetails == "explore")
                         {
-                            _navViewItemList[3].SetTitle("Explore");
+                            _navViewItemList[tab].SetTitle("Explore");
+                            TheFragment4._url = Globals.URLs._explore;
                         }
                     }
                     break;
                 case 4:
+                    if (AppSettings._fanMode)
+                    {
+                        if (changeDetails == "" || changeDetails == null)
+                        {
+                            _navViewItemList[tab].SetTitle("Subs");
+                        }
+                        if (changeDetails == "subs")
+                        {
+                            _navViewItemList[tab].SetTitle("Subs");
+                        }
+                        if (changeDetails == "feed")
+                        {
+                            _navViewItemList[tab].SetTitle("Feed");
+                        }
+                        if (changeDetails == "explore")
+                        {
+                            _navViewItemList[tab].SetTitle("Explore");
+                        }
+                    }
                     break;
             }
         }
 
+        /// <summary>
+        /// Listen for long click events on the navbar
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void NavigationViewLongClickListener(object sender, LongClickEventArgs e)
+        {
+            _fm5.ShowAppSettingsMenu();
+        }
+        
         public override void OnWindowFocusChanged(bool hasFocus)
         {
             Globals._bkgrd = true;

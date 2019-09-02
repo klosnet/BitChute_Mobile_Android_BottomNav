@@ -7,6 +7,7 @@ using Android.Webkit;
 using Android.Widget;
 using BottomNavigationViewPager.Classes;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BottomNavigationViewPager.Fragments
@@ -22,10 +23,13 @@ namespace BottomNavigationViewPager.Fragments
         public static View _view;
         public static AppSettings _appSettings = new AppSettings();
 
-        //public static Spinner _tab4OverrideSpinner;
-        //public static Spinner _tab5OverrideSpinner;
+        public static List<object> _settingsList = new List<object>();
+        public static Spinner _tab4OverrideSpinner;
+        public static Spinner _tab5OverrideSpinner;
 
         bool tabLoaded = false;
+
+        public static string _url = "https://www.bitchute.com/settings/";
 
         public static TheFragment5 NewInstance(string title, string icon)
         {
@@ -66,29 +70,20 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.Settings.JavaScriptEnabled = true;
 
+                _wv.Settings.DisplayZoomControls = false;
+
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
-                _wv.LoadUrl(@"https://www.bitchute.com/settings/");
+                _wv.LoadUrl(_url);
 
                 //_wv.Settings.AllowFileAccess = true;
 
                 //_wv.Settings.AllowContentAccess = true;
-                /*
-                _tab4OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab4OverrideSpinner);
-
+                
                 var _ctx = Android.App.Application.Context;
           
-                var tab4SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
-                        Resource.Id.tab5OverrideSpinner, AppSettings._tab4OverrideStringList );
-
-                _tab5OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
-
-                var tab5SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
-                        Resource.Id.tab5OverrideSpinner, AppSettings._tab4OverrideStringList);
-                */
                 _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
-
-
+                
                 AppSettings._zcoffrb = _view.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
                 AppSettings._zconrb = _view.FindViewById<RadioButton>(Resource.Id._zoomControlOnBtn);
                 AppSettings._fmoffrb = _view.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
@@ -99,24 +94,39 @@ namespace BottomNavigationViewPager.Fragments
                 AppSettings._t1fonrb = _view.FindViewById<RadioButton>(Resource.Id._tab1FeaturedCreatorsOn);
                 AppSettings._stoverrideoffrb = _view.FindViewById<RadioButton>(Resource.Id._stOverrideOffRb);
                 AppSettings._stoverrideonrb = _view.FindViewById<RadioButton>(Resource.Id._stOverrideOnRb);
+                AppSettings._tab4OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab4OverrideSpinner);
+                AppSettings._tab5OverideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
 
                 AppSettings._zcoffrb.CheckedChange += ExtSettingChanged;
                 AppSettings._fmoffrb.CheckedChange += ExtSettingChanged;
                 AppSettings._t3hoffrb.CheckedChange += ExtSettingChanged;
                 AppSettings._t1foffrb.CheckedChange += ExtSettingChanged;
                 AppSettings._stoverrideoffrb.CheckedChange += ExtSettingChanged;
+                AppSettings._tab4OverrideSpinner.ItemSelected += OnTab4OverrideSelectionChanged;
+                AppSettings._tab5OverideSpinner.ItemSelected += OnTab5OverrideSelectionChanged;
+
+                _appSettings.GetTabOverrideStringList();
+
+                var tab4SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
+                        Android.Resource.Layout.SimpleListItem1, AppSettings._tabOverrideStringList);
+
+                AppSettings._tab4OverrideSpinner.Adapter = tab4SpinOverrideAdapter;
+
+                var tab5SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
+                        Android.Resource.Layout.SimpleListItem1, AppSettings._tabOverrideStringList);
+
+                AppSettings._tab5OverideSpinner.Adapter = tab5SpinOverrideAdapter;
+
                 tabLoaded = true;
             }
             _wv.SetOnScrollChangeListener(new ExtScrollListener());
 
             _appSettingsLayout.Visibility = ViewStates.Gone;
-
-
-
+            
             return _view;
         }
 
-        public void OnSettingsChanged(object[] settings)
+        public void OnSettingsChanged(List<object> settings)
         {
             _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
 
@@ -131,8 +141,7 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
             }
         }
-
-
+        
         public void ShowAppSettingsMenu()
         {
             if (_wvLayout.Visibility == ViewStates.Visible)
@@ -220,8 +229,7 @@ namespace BottomNavigationViewPager.Fragments
                 _wvRling = false;
             }
         }
-
-
+        
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
@@ -230,7 +238,43 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        public void OnTab4OverrideSelectionChanged(object sender, EventArgs e)
+        {
+            switch (_tab4OverrideSpinner.SelectedItemPosition)
+            {
+                case 0:
+                    _main.TabDetailChanger(3, "subs");
+                    break;
+                case 1:
+                    _main.TabDetailChanger(3, "feed");
+                    break;
+                case 2:
+                    _main.TabDetailChanger(3, "home");
+                    break;
+                case 3:
+                    _main.TabDetailChanger(3, "explore");
+                    break;
+            }
+        }
 
+        public void OnTab5OverrideSelectionChanged(object sender, EventArgs e)
+        {
+            switch (_tab5OverrideSpinner.SelectedItemPosition)
+            {
+                case 0:
+                    _main.TabDetailChanger(4, "subs");
+                    break;
+                case 1:
+                    _main.TabDetailChanger(4, "feed");
+                    break;
+                case 2:
+                    _main.TabDetailChanger(4, "home");
+                    break;
+                case 3:
+                    _main.TabDetailChanger(4, "explore");
+                    break;
+            }
+        }
         public static Android.Content.ISharedPreferences _prefs;
         public static Android.Content.ISharedPreferencesEditor _prefEditor;
 
@@ -292,14 +336,14 @@ namespace BottomNavigationViewPager.Fragments
             prefEditor.PutBoolean("t1featured", AppSettings._tab1FeaturedOn);
             prefEditor.PutBoolean("settingstaboverride", AppSettings._settingsTabOverride);
             prefEditor.Commit();
-
-            object[] _settingsArray = {
-                AppSettings._zoomControl,
-                AppSettings._fanMode,
-                AppSettings._tab3Hide,
-                AppSettings._tab1FeaturedOn,
-                AppSettings._settingsTabOverride };
-            _main.OnSettingsChanged(_settingsArray);
+            
+            _settingsList.Add(AppSettings._zoomControl);
+            _settingsList.Add(AppSettings._fanMode);
+            _settingsList.Add(AppSettings._tab3Hide);
+            _settingsList.Add(AppSettings._tab1FeaturedOn);
+            _settingsList.Add(AppSettings._settingsTabOverride);
+            
+            _main.OnSettingsChanged(_settingsList);
         }
     }
 }

@@ -6,6 +6,7 @@ using Android.Webkit;
 using Android.Widget;
 using BottomNavigationViewPager.Classes;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BottomNavigationViewPager.Fragments
@@ -68,7 +69,7 @@ namespace BottomNavigationViewPager.Fragments
             return _view;
         }
 
-        public void OnSettingsChanged(object[] settings)
+        public void OnSettingsChanged(List<object> settings)
         {
             _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
 

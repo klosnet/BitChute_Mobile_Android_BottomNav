@@ -6,6 +6,7 @@ using Android.Webkit;
 using Android.Widget;
 using BottomNavigationViewPager.Classes;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Android.Views.View;
 
@@ -60,6 +61,8 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.Settings.JavaScriptEnabled = true;
 
+                _wv.Settings.DisplayZoomControls = false;
+
                 //_wv.Settings.AllowFileAccess = true;
 
                 //_wv.Settings.AllowContentAccess = true;
@@ -79,20 +82,22 @@ namespace BottomNavigationViewPager.Fragments
             return _view;
         }
 
-        public void OnSettingsChanged(object[] settings)
+        public void OnSettingsChanged(List<object> settings)
         {
             _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
 
             if (Convert.ToBoolean(settings[3]))
             {
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
-
+            }
+            else
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsShowCarousel);
             }
 
             if (AppSettings._zoomControl)
             {
                 _wv.Settings.BuiltInZoomControls = true;
-                _wv.Settings.DisplayZoomControls = false;
             }
             else
             {

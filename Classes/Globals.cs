@@ -9,6 +9,7 @@ namespace BottomNavigationViewPager.Classes
         //         .Context.GetSystemService(Context.ActivityService);
 
 
+
         public static bool _setWebView { get; set; }
         public static bool _navIsTimingOut { get; set; }
         public static int _wvHeight { get; set; }
@@ -16,6 +17,8 @@ namespace BottomNavigationViewPager.Classes
 
         public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
              .Context.GetSystemService(Context.ActivityService);
+
+
 
 
         /// <summary>
@@ -99,28 +102,68 @@ namespace BottomNavigationViewPager.Classes
                 "document.getElementById('carousel').style.display='none'; " + "})()";
 
             /// <summary>
+            /// shows the carousel aka featured creators
+            /// </summary>
+            public static string _jsShowCarousel = "javascript:(function() { " +
+                "document.getElementById('carousel').style.display='inherit'; " + "})()";
+            
+            /// <summary>
             /// hides the listing all element
             /// </summary>
             public static string _jsSelectTab = "javascript:(function() { " +
                             "document.getElementById('listing-all').style.display='none'; " + "})()";
-
+            
+            /// <summary>
+            /// shows the listing all element
+            /// </summary>
+            public static string _jsShowTab1 = "javascript:(function() { " +
+                            "document.getElementById('listing-all').style.display='inherit'; " + "})()";
+            
             /// <summary>
             /// hides the popular listings
             /// </summary>
             public static string _jsSelectTab2 = "javascript:(function() { " +
                             "document.getElementById('listing-popular').style.display='none'; " + "})()";
-            
+
+            /// <summary>
+            /// shows the popular listings
+            /// </summary>
+            public static string _jsShowTab2 = "javascript:(function() { " +
+                            "document.getElementById('listing-popular').style.display='inherit'; " + "})()";
+
+
             /// <summary>
             /// shows the subscribed feed
             /// </summary>
             public static string _jsSelectTab3 = "javascript:(function() { " +
                             "document.getElementById('listing-subscribed').style.display='block'; " + "})()";
-
+            
             /// <summary>
             /// hides the tab scroll inner element
             /// </summary>
             public static string _jsHideLabel = "javascript:(function() { " +
                             "document.getElementsByClassName('tab-scroll-inner')[0].style.display='none'; " + "})()";
+            
+            /// <summary>
+            /// shows the tab scroll inner element
+            /// </summary>
+            public static string _jsShowLabel = "javascript:(function() { " +
+                            "document.getElementsByClassName('tab-scroll-inner')[0].style.display='inherit'; " + "})()";
+
+        }
+
+        /// <summary>
+        /// contrains url strings
+        /// </summary>
+        public class URLs
+        {
+            public static string _homepage = "https://www.bitchute.com/";
+
+            public static string _subspage = "https://www.bitchute.com/subscriptions/";
+
+            public static string _explore = "https://www.bitchute.com/explore/";
+
+            public static string _settings = "https://www.bitchute.com/settings/";
         }
     }
 }

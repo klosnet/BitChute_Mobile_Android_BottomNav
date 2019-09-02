@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.Graphics.Drawables;
 using Android.OS;
@@ -57,6 +58,8 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
+                _wv.Settings.DisplayZoomControls = false;
+
                 _wv.LoadUrl(@"https://www.bitchute.com/");
 
                 _wv.Settings.JavaScriptEnabled = true;
@@ -73,7 +76,7 @@ namespace BottomNavigationViewPager.Fragments
             return _view;
         }
 
-        public void OnSettingsChanged(object[] settings)
+        public void OnSettingsChanged(List<object> settings)
         {
             _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
 
@@ -95,12 +98,17 @@ namespace BottomNavigationViewPager.Fragments
 
             if (AppSettings._tab3Hide)
             {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
 
-            }
-            else
-            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab);
 
+                _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab2);
+
+                _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
+
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
             }
+        
         }
 
         public static MainActivity _main = new MainActivity();
@@ -155,7 +163,7 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        private class ExtWebViewClient : WebViewClient
+        public class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
             {
