@@ -252,7 +252,7 @@ namespace BottomNavigationViewPager
             {
                 _navigationView.Menu.GetItem(4).SetTitle(TheFragment5._tab5OverridePreference);
             }
-            //CustomOnScroll();
+                CustomOnScroll();
         }
 
         //BottomNavigationView.NavigationItemReselectedEventArgs
@@ -316,8 +316,6 @@ namespace BottomNavigationViewPager
         /// <param name="tab">int representing tab 0 is farthest left going up to the right</param>
         public void TabDetailChanger(int tab, string changeDetails)
         {
-            _fm5.Arguments.PutString("title", "TestTitle");
-
             switch (tab)
             {
                 case 0:
@@ -385,7 +383,7 @@ namespace BottomNavigationViewPager
         }
 
         /// <summary>
-        /// Listen for long click events on the navbar
+        /// Listens for long click events on the navbar
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
