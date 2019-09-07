@@ -21,15 +21,46 @@ namespace BottomNavigationViewPager.Fragments
         public static LinearLayout _wvLayout;
         public static LinearLayout _appSettingsLayout;
         public static View _view;
-        public static AppSettings _appSettings = new AppSettings();
 
         public static List<object> _settingsList = new List<object>();
         public static Spinner _tab4OverrideSpinner;
         public static Spinner _tab5OverrideSpinner;
 
+
+        public static bool _zoomControl { get; set; }
+        public static bool _tab1FeaturedOn  { get; set; }
+        public static bool _fanMode  { get; set; }
+        public static bool _tab3Hide { get; set; }
+        public static bool _settingsTabOverride { get; set; }
+
+        public static string _tab4OverridePreference { get; set; }
+        public static string _tab5OverridePreference { get; set; }
+
         bool tabLoaded = false;
 
+        public static string _tab5Title = "";
         public static string _url = "https://www.bitchute.com/settings/";
+
+        public static RadioButton _fmoffrb;
+        public static RadioButton _fmonrb;
+
+        public static RadioButton _zcoffrb;
+        public static RadioButton _zconrb;
+
+        public static RadioButton _t3honrb;
+        public static RadioButton _t3hoffrb;
+
+        public static RadioButton _t1fonrb;
+        public static RadioButton _t1foffrb;
+
+        public static RadioButton _stoverrideoffrb;
+        public static RadioButton _stoverrideonrb;
+
+        public static List<string> _tabOverrideStringList = new List<string>();
+        ArrayAdapter<string> _tab4SpinOverrideAdapter;
+        ArrayAdapter<string> _tab5SpinOverrideAdapter;
+
+        public static TheFragment5 _fm5;
 
         public static TheFragment5 NewInstance(string title, string icon)
         {
@@ -37,20 +68,28 @@ namespace BottomNavigationViewPager.Fragments
             fragment.Arguments = new Bundle();
             fragment.Arguments.PutString("title", title);
             fragment.Arguments.PutString("icon", icon);
+            _fm5 = fragment;
             return fragment;
         }
 
         public override void OnCreate(Bundle savedInstanceState)
         {
+            _tabOverrideStringList.Add("Home");
+            _tabOverrideStringList.Add("Subs");
+            _tabOverrideStringList.Add("Feed");
+            _tabOverrideStringList.Add("Explore");
+            _tabOverrideStringList.Add("Settings");
+            _tabOverrideStringList.Add("MyChannel");
+
             base.OnCreate(savedInstanceState);
 
             if (Arguments != null)
             {
-                if (Arguments.ContainsKey("title"))
-                    _title = (string)Arguments.Get("title");
+                    if (Arguments.ContainsKey("title"))
+                        _title = (string)Arguments.Get("title");
 
-                if (Arguments.ContainsKey("icon"))
-                    _icon = (string)Arguments.Get("icon");
+                    if (Arguments.ContainsKey("icon"))
+                        _icon = (string)Arguments.Get("icon");
             }
         }
 
@@ -84,45 +123,49 @@ namespace BottomNavigationViewPager.Fragments
           
                 _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
                 
-                AppSettings._zcoffrb = _view.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
-                AppSettings._zconrb = _view.FindViewById<RadioButton>(Resource.Id._zoomControlOnBtn);
-                AppSettings._fmoffrb = _view.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
-                AppSettings._fmonrb = _view.FindViewById<RadioButton>(Resource.Id._fanModeOnBtn);
-                AppSettings._t3hoffrb = _view.FindViewById<RadioButton>(Resource.Id._tab3HideOverrideOff);
-                AppSettings._t3honrb = _view.FindViewById<RadioButton>(Resource.Id._tab3HideOverrideOn);
-                AppSettings._t1foffrb = _view.FindViewById<RadioButton>(Resource.Id._tab1FeaturedCreatorsOff);
-                AppSettings._t1fonrb = _view.FindViewById<RadioButton>(Resource.Id._tab1FeaturedCreatorsOn);
-                AppSettings._stoverrideoffrb = _view.FindViewById<RadioButton>(Resource.Id._stOverrideOffRb);
-                AppSettings._stoverrideonrb = _view.FindViewById<RadioButton>(Resource.Id._stOverrideOnRb);
-                AppSettings._tab4OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab4OverrideSpinner);
-                AppSettings._tab5OverideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
+                _zcoffrb = _view.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
+                _zconrb = _view.FindViewById<RadioButton>(Resource.Id._zoomControlOnBtn);
+                _fmoffrb = _view.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
+                _fmonrb = _view.FindViewById<RadioButton>(Resource.Id._fanModeOnBtn);
+                _t3hoffrb = _view.FindViewById<RadioButton>(Resource.Id._tab3HideOverrideOff);
+                _t3honrb = _view.FindViewById<RadioButton>(Resource.Id._tab3HideOverrideOn);
+                _t1foffrb = _view.FindViewById<RadioButton>(Resource.Id._tab1FeaturedCreatorsOff);
+                _t1fonrb = _view.FindViewById<RadioButton>(Resource.Id._tab1FeaturedCreatorsOn);
+                _stoverrideoffrb = _view.FindViewById<RadioButton>(Resource.Id._stOverrideOffRb);
+                _stoverrideonrb = _view.FindViewById<RadioButton>(Resource.Id._stOverrideOnRb);
+                _tab4OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab4OverrideSpinner);
+                _tab5OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
 
-                AppSettings._zcoffrb.CheckedChange += ExtSettingChanged;
-                AppSettings._fmoffrb.CheckedChange += ExtSettingChanged;
-                AppSettings._t3hoffrb.CheckedChange += ExtSettingChanged;
-                AppSettings._t1foffrb.CheckedChange += ExtSettingChanged;
-                AppSettings._stoverrideoffrb.CheckedChange += ExtSettingChanged;
-                AppSettings._tab4OverrideSpinner.ItemSelected += OnTab4OverrideSelectionChanged;
-                AppSettings._tab5OverideSpinner.ItemSelected += OnTab5OverrideSelectionChanged;
+                _zcoffrb.CheckedChange += ExtSettingChanged;
+                _fmonrb.CheckedChange += ExtSettingChanged;
+                _t3hoffrb.CheckedChange += ExtSettingChanged;
+                _t1foffrb.CheckedChange += ExtSettingChanged;
+                _stoverrideonrb.CheckedChange += OnTab5OverrideChanged;
+                _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSelectionChanged;
+                _tab5OverrideSpinner.ItemSelected += OnTab5OverrideSelectionChanged;
 
-                _appSettings.GetTabOverrideStringList();
+                _zconrb.Checked = true;
 
-                var tab4SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
-                        Android.Resource.Layout.SimpleListItem1, AppSettings._tabOverrideStringList);
+                
 
-                AppSettings._tab4OverrideSpinner.Adapter = tab4SpinOverrideAdapter;
+                _tab4SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
+                        Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
 
-                var tab5SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
-                        Android.Resource.Layout.SimpleListItem1, AppSettings._tabOverrideStringList);
+                _tab4OverrideSpinner.Adapter = _tab4SpinOverrideAdapter;
 
-                AppSettings._tab5OverideSpinner.Adapter = tab5SpinOverrideAdapter;
+                _tab5SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
+                        Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
+
+                _tab5OverrideSpinner.Adapter = _tab5SpinOverrideAdapter;
 
                 tabLoaded = true;
             }
             _wv.SetOnScrollChangeListener(new ExtScrollListener());
 
             _appSettingsLayout.Visibility = ViewStates.Gone;
-            
+
+            SetCheckedState();
+
             return _view;
         }
 
@@ -132,16 +175,76 @@ namespace BottomNavigationViewPager.Fragments
 
             if (Convert.ToBoolean(settings[2]))
             {
-                _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab);
-
-                _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab2);
-
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
-
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
             }
         }
-        
+
+        public void SetCheckedState()
+        {
+            TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
+            TheFragment5._fanMode = _prefs.GetBoolean("fanmode", false);
+            TheFragment5._tab3Hide = _prefs.GetBoolean("tab3hide", true);
+            TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
+            TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
+            var _sto = TheFragment5._settingsTabOverride;
+
+                if (_zoomControl)
+                {
+
+                    _zconrb.Checked = true;
+                    var _test = _zconrb.Checked;
+                }
+                else
+                {
+                    _zconrb.Checked = false;
+                    _zcoffrb.Checked = true;
+                }
+                if (_fanMode)
+                {
+                    _fmoffrb.Checked = false;
+                    _fmoffrb.Checked = true;
+                }
+                else
+                {
+                    _fmoffrb.Checked = true;
+                    _fmonrb.Checked = false;
+                }
+                if (_tab1FeaturedOn)
+                {
+                    _t1foffrb.Checked = false;
+                    _t1fonrb.Checked = true;
+                }
+                else
+                {
+                    _t1foffrb.Checked = true;
+                    _t1fonrb.Checked = true;
+                }
+                if (_tab3Hide)
+                {
+                    _t3hoffrb.Checked = false;
+                    _t3honrb.Checked = true;
+                }
+                else
+                {
+                    _t3hoffrb.Checked = true;
+                    _t3honrb.Checked = false;
+                }
+                if (_settingsTabOverride)
+                {
+                    _stoverrideoffrb.Checked = false;
+                    _stoverrideonrb.Checked = true;
+                }
+                else
+                {
+                    _stoverrideoffrb.Checked = true;
+                    _stoverrideonrb.Checked = false;
+                }
+
+        }
+
         public void ShowAppSettingsMenu()
         {
             if (_wvLayout.Visibility == ViewStates.Visible)
@@ -200,7 +303,7 @@ namespace BottomNavigationViewPager.Fragments
                 }
                 else
                 {
-                    _wv.LoadUrl(@"https://www.bitchute.com/settings/");
+                    _wv.LoadUrl(_url);
                 }
             }
         }
@@ -238,41 +341,43 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        public void OnTab5OverrideChanged(object sender, EventArgs e)
+        {
+            if (_stoverrideonrb.Checked)
+            {
+                _settingsTabOverride = true;
+            }
+            else
+            {
+                _settingsTabOverride = false;
+            }
+            var prefEditor = _prefs.Edit();
+
+            var ch = _settingsTabOverride;
+            prefEditor.PutBoolean("settingstaboverride", _settingsTabOverride);
+        }
+
         public void OnTab4OverrideSelectionChanged(object sender, EventArgs e)
         {
-            switch (_tab4OverrideSpinner.SelectedItemPosition)
+            _zconrb.Checked = true;
+
+            _tab4OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab4OverrideSpinner);
+
+            if (_tab4OverrideSpinner != null)
             {
-                case 0:
-                    _main.TabDetailChanger(3, "subs");
-                    break;
-                case 1:
-                    _main.TabDetailChanger(3, "feed");
-                    break;
-                case 2:
-                    _main.TabDetailChanger(3, "home");
-                    break;
-                case 3:
-                    _main.TabDetailChanger(3, "explore");
-                    break;
+                _tab4OverridePreference = _tab4OverrideSpinner.SelectedItem.ToString();
+                _main.TabDetailChanger(3, _tab4OverrideSpinner.SelectedItem.ToString());
             }
         }
 
         public void OnTab5OverrideSelectionChanged(object sender, EventArgs e)
         {
-            switch (_tab5OverrideSpinner.SelectedItemPosition)
+            _tab5OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
+
+            if (_tab5OverrideSpinner != null)
             {
-                case 0:
-                    _main.TabDetailChanger(4, "subs");
-                    break;
-                case 1:
-                    _main.TabDetailChanger(4, "feed");
-                    break;
-                case 2:
-                    _main.TabDetailChanger(4, "home");
-                    break;
-                case 3:
-                    _main.TabDetailChanger(4, "explore");
-                    break;
+                _tab5OverridePreference = _tab5OverrideSpinner.SelectedItem.ToString();
+                _main.TabDetailChanger(4, _tab5OverrideSpinner.SelectedItem.ToString());
             }
         }
         public static Android.Content.ISharedPreferences _prefs;
@@ -287,63 +392,81 @@ namespace BottomNavigationViewPager.Fragments
         /// <param name="e"></param>
         public void ExtSettingChanged(object sender, EventArgs e)
         {
+
+            if (_tab4OverrideSpinner.SelectedItem == null)
+            {
+                return;
+            }
+            _tab4OverridePreference = _tab4OverrideSpinner.SelectedItem.ToString();
+            _tab5OverridePreference = _tab5OverrideSpinner.SelectedItem.ToString();
+
             var prefEditor = _prefs.Edit();
+            if (tabLoaded)
+            {
+                if (_zconrb.Checked)
+                {
+                    _zoomControl = true;
+                }
+                else
+                {
+                    _zoomControl = false;
+                }
 
-            if (AppSettings._zcoffrb.Checked)
-            {
-                AppSettings._zoomControl = false;
-            }
-            else
-            {
-                AppSettings._zoomControl = true;
-            }
-            if (AppSettings._fmoffrb.Checked)
-            {
-                AppSettings._fanMode = false;
-            }
-            else
-            {
-                AppSettings._fanMode = true;
-            }
-            if (AppSettings._t3honrb.Checked)
-            {
-                AppSettings._tab3Hide = true;
-            }
-            else
-            {
-                AppSettings._tab3Hide = false;
-            }
-            if (AppSettings._t1fonrb.Checked)
-            {
-                AppSettings._tab1FeaturedOn = true;
-            }
-            else
-            {
-                AppSettings._tab1FeaturedOn = false;
-            }
-            if (AppSettings._stoverrideoffrb.Checked)
-            {
-                AppSettings._settingsTabOverride = false;
-            }
-            else
-            {
-                AppSettings._settingsTabOverride = true;
-            }
+                if (_fmonrb.Checked)
+                {
+                    _fanMode = true;
 
-            prefEditor.PutBoolean("zoomcontrol", AppSettings._zoomControl);
-            prefEditor.PutBoolean("fanmode", AppSettings._fanMode);
-            prefEditor.PutBoolean("tab3hide", AppSettings._tab3Hide);
-            prefEditor.PutBoolean("t1featured", AppSettings._tab1FeaturedOn);
-            prefEditor.PutBoolean("settingstaboverride", AppSettings._settingsTabOverride);
-            prefEditor.Commit();
-            
-            _settingsList.Add(AppSettings._zoomControl);
-            _settingsList.Add(AppSettings._fanMode);
-            _settingsList.Add(AppSettings._tab3Hide);
-            _settingsList.Add(AppSettings._tab1FeaturedOn);
-            _settingsList.Add(AppSettings._settingsTabOverride);
-            
-            _main.OnSettingsChanged(_settingsList);
+                    _main.TabDetailChanger(3, _tab4OverridePreference);
+                }
+                else
+                {
+                    _fanMode = false;
+                }
+                if (_t3honrb.Checked)
+                {
+                    _tab3Hide = true;
+                }
+                else
+                {
+                    _tab3Hide = false;
+                }
+                if (_t1fonrb.Checked)
+                {
+                    _tab1FeaturedOn = true;
+                }
+                else
+                {
+                    _tab1FeaturedOn = false;
+                }
+                if (_stoverrideonrb.Checked)
+                {
+                    _settingsTabOverride = true;
+
+                    _main.TabDetailChanger(4, _tab5OverridePreference);
+                }
+                else
+                {
+                    _settingsTabOverride = false;
+
+                }
+
+                prefEditor.PutBoolean("zoomcontrol", _zoomControl);
+                prefEditor.PutBoolean("fanmode", _fanMode);
+                prefEditor.PutBoolean("tab3hide", _tab3Hide);
+                prefEditor.PutBoolean("t1featured", _tab1FeaturedOn);
+                var ch = _settingsTabOverride;
+                prefEditor.PutBoolean("settingstaboverride", _settingsTabOverride);
+                prefEditor.Commit();
+
+                _settingsList.Clear();
+                _settingsList.Add(_zoomControl);
+                _settingsList.Add(_fanMode);
+                _settingsList.Add(_tab3Hide);
+                _settingsList.Add(_tab1FeaturedOn);
+                _settingsList.Add(_settingsTabOverride);
+
+                _main.OnSettingsChanged(_settingsList);
+            }
         }
     }
 }

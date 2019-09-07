@@ -133,12 +133,12 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
 
             }
-            if (AppSettings._fanMode)
+            if (TheFragment5._fanMode)
             {
 
             }
 
-            if (AppSettings._zoomControl)
+            if (TheFragment5._zoomControl)
             {
                 _wv.Settings.BuiltInZoomControls = true;
                 _wv.Settings.DisplayZoomControls = false;
@@ -148,15 +148,15 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.Settings.BuiltInZoomControls = false;
             }
 
-            if (AppSettings._tab4OverridePreference == "feed" && AppSettings._tab3Hide)
+            if (TheFragment5._tab4OverridePreference == "feed" && TheFragment5._tab3Hide)
             {
-                if (AppSettings._tab3Hide)
+                if (TheFragment5._tab3Hide)
                 {
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
 
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
 
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab2);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
 
                     _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
 
@@ -176,7 +176,7 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
 
-                if (!AppSettings._tab1FeaturedOn)
+                if (!TheFragment5._tab1FeaturedOn)
                 {
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
                 }

@@ -54,22 +54,32 @@ namespace BottomNavigationViewPager
 
         ViewPager _viewPager;
         public static BottomNavigationView _navigationView;
-        public static List<BottomNavigationItemView> _navViewItemList;
+        public static List<BottomNavigationItemView> _navViewItemList 
+            = new List<BottomNavigationItemView>();
+
         IMenuItem _menu;
         Fragment[] _fragments;
 
         public static MainActivity _main;
-
-        public static AppSettings _appSettings = new AppSettings();
-
+        
         public static Globals _globals = new Globals();
 
         public static bool _navBarHideTimeout = false;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            var _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
+            
+            TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
+
+            var check = TheFragment5._zoomControl;
+            TheFragment5._fanMode = _prefs.GetBoolean("fanmode", false);
+            TheFragment5._tab3Hide = _prefs.GetBoolean("tab3hide", true);
+            TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
+            TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
+            var cc = TheFragment5._settingsTabOverride;
+
             _main = this;
-            _appSettings.OnAppCreation();
 
             base.OnCreate(savedInstanceState);
 
@@ -89,6 +99,8 @@ namespace BottomNavigationViewPager
             _navigationView.LongClick += NavigationViewLongClickListener;
 
             _viewPager.OffscreenPageLimit = 4;
+
+            
         }
 
         public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
@@ -130,6 +142,7 @@ namespace BottomNavigationViewPager
                 _navHidden = false;
                 NavBarRemove();
                 _navTimeout = true;
+                _fm3.ShowMore();
             }
         }
 
@@ -146,7 +159,7 @@ namespace BottomNavigationViewPager
                 _navTimer++;
                 if (_navTimer == 8)
                 {
-                    _navigationView.Visibility = ViewStates.Gone;
+                    _navigationView.Visibility = ViewStates.Visible;
                     _navTimeout = false;
                     _navHidden = true;
                 }
@@ -231,7 +244,15 @@ namespace BottomNavigationViewPager
 
             _tabSelected = _viewPager.CurrentItem;
 
-            CustomOnScroll();
+            if (TheFragment5._fanMode)
+            {
+                _navigationView.Menu.GetItem(3).SetTitle(TheFragment5._tab4OverridePreference);
+            }
+            if (TheFragment5._settingsTabOverride)
+            {
+                _navigationView.Menu.GetItem(4).SetTitle(TheFragment5._tab5OverridePreference);
+            }
+            //CustomOnScroll();
         }
 
         //BottomNavigationView.NavigationItemReselectedEventArgs
@@ -255,6 +276,7 @@ namespace BottomNavigationViewPager
                     item.SetChecked(item.ItemData.IsChecked);
                     item.LongClick += NavigationViewLongClickListener;
 
+                    
                     if (_navViewItemList != null)
                     {
                         _navViewItemList.Add(item);
@@ -273,7 +295,7 @@ namespace BottomNavigationViewPager
         /// <param name="oa"></param>
         public void OnSettingsChanged(List<object> oa)
         {
-            if (AppSettings._fanMode)
+            if (TheFragment5._fanMode)
             {
                 //_main.TabDetailChanger();
             }
@@ -282,6 +304,7 @@ namespace BottomNavigationViewPager
             _fm3.OnSettingsChanged(oa);
             _fm4.OnSettingsChanged(oa);
             _fm5.OnSettingsChanged(oa);
+           
         }
 
         /// <summary>
@@ -293,6 +316,8 @@ namespace BottomNavigationViewPager
         /// <param name="tab">int representing tab 0 is farthest left going up to the right</param>
         public void TabDetailChanger(int tab, string changeDetails)
         {
+            _fm5.Arguments.PutString("title", "TestTitle");
+
             switch (tab)
             {
                 case 0:
@@ -302,24 +327,29 @@ namespace BottomNavigationViewPager
                 case 2:
                     break;
                 case 3:
-                    if (AppSettings._fanMode)
+                    if (TheFragment5._fanMode)
                     {
                         if (changeDetails == "" || changeDetails == null)
                         {
                             _navViewItemList[tab].SetTitle("Subs");
                             TheFragment4._url = Globals.URLs._subspage;
                         }
-                        if (changeDetails == "subs")
+                        if (changeDetails == "Home")
+                        {
+                            _navViewItemList[tab].SetTitle("Home");
+                            TheFragment4._url = Globals.URLs._homepage;
+                        }
+                        if (changeDetails == "Subs")
                         {
                             _navViewItemList[tab].SetTitle("Subs");
                             TheFragment4._url = Globals.URLs._subspage;
                         }
-                        if (changeDetails == "feed")
+                        if (changeDetails == "Feed")
                         {
                             _navViewItemList[tab].SetTitle("Feed");
                             TheFragment4._url = Globals.URLs._homepage;
                         }
-                        if (changeDetails == "explore")
+                        if (changeDetails == "Explore")
                         {
                             _navViewItemList[tab].SetTitle("Explore");
                             TheFragment4._url = Globals.URLs._explore;
@@ -327,23 +357,27 @@ namespace BottomNavigationViewPager
                     }
                     break;
                 case 4:
-                    if (AppSettings._fanMode)
+                    if (TheFragment5._settingsTabOverride)
                     {
                         if (changeDetails == "" || changeDetails == null)
                         {
                             _navViewItemList[tab].SetTitle("Subs");
+                            TheFragment5._url = Globals.URLs._subspage;
                         }
-                        if (changeDetails == "subs")
+                        if (changeDetails == "Subs")
                         {
                             _navViewItemList[tab].SetTitle("Subs");
+                            TheFragment5._url = Globals.URLs._subspage;
                         }
-                        if (changeDetails == "feed")
+                        if (changeDetails == "Feed")
                         {
                             _navViewItemList[tab].SetTitle("Feed");
+                            TheFragment5._url = Globals.URLs._homepage;
                         }
-                        if (changeDetails == "explore")
+                        if (changeDetails == "Explore")
                         {
                             _navViewItemList[tab].SetTitle("Explore");
+                            TheFragment5._url = Globals.URLs._explore;
                         }
                     }
                     break;

@@ -73,7 +73,7 @@ namespace BottomNavigationViewPager.Fragments
         {
             _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
 
-            if (AppSettings._zoomControl)
+            if (TheFragment5._zoomControl)
             {
                 _wv.Settings.BuiltInZoomControls = true;
                 _wv.Settings.DisplayZoomControls = false;

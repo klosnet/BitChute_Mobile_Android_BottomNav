@@ -7,20 +7,14 @@ namespace BottomNavigationViewPager.Classes
     {
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
-
-
-
+        
         public static bool _setWebView { get; set; }
         public static bool _navIsTimingOut { get; set; }
         public static int _wvHeight { get; set; }
-
-
+        
         public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
              .Context.GetSystemService(Context.ActivityService);
-
-
-
-
+        
         /// <summary>
         /// global bool setting: 
         /// returns/should be set to false if this app is in the foreground
@@ -110,7 +104,7 @@ namespace BottomNavigationViewPager.Classes
             /// <summary>
             /// hides the listing all element
             /// </summary>
-            public static string _jsSelectTab = "javascript:(function() { " +
+            public static string _jsHideTab1 = "javascript:(function() { " +
                             "document.getElementById('listing-all').style.display='none'; " + "})()";
             
             /// <summary>
@@ -122,7 +116,7 @@ namespace BottomNavigationViewPager.Classes
             /// <summary>
             /// hides the popular listings
             /// </summary>
-            public static string _jsSelectTab2 = "javascript:(function() { " +
+            public static string _jsHideTab2 = "javascript:(function() { " +
                             "document.getElementById('listing-popular').style.display='none'; " + "})()";
 
             /// <summary>
@@ -130,8 +124,7 @@ namespace BottomNavigationViewPager.Classes
             /// </summary>
             public static string _jsShowTab2 = "javascript:(function() { " +
                             "document.getElementById('listing-popular').style.display='inherit'; " + "})()";
-
-
+            
             /// <summary>
             /// shows the subscribed feed
             /// </summary>
@@ -150,10 +143,26 @@ namespace BottomNavigationViewPager.Classes
             public static string _jsShowLabel = "javascript:(function() { " +
                             "document.getElementsByClassName('tab-scroll-inner')[0].style.display='inherit'; " + "})()";
 
+            /// <summary>
+            /// hides the trending tab
+            /// </summary>
+            public static string _jsHideTrending = "javascript:(function() { " +
+                            "document.getElementById('listing-trending').style.display='none'; " + "})()";
+            
+            /// <summary>
+            /// shows the trending tab
+            /// </summary>
+            public static string _jsShowTrending = "javascript:(function() { " +
+                            "document.getElementById('listing-trending').style.display='block'; " + "})()";
+            //$('.show-more').click(function(){listingExtend(40);});
+
+            public static string _jqShowMore = "javascript:(function() { " +
+                            "document.listingExtend(40);" + "})()";
+
         }
 
         /// <summary>
-        /// contrains url strings
+        /// contains url strings
         /// </summary>
         public class URLs
         {
@@ -161,7 +170,7 @@ namespace BottomNavigationViewPager.Classes
 
             public static string _subspage = "https://www.bitchute.com/subscriptions/";
 
-            public static string _explore = "https://www.bitchute.com/explore/";
+            public static string _explore =  "https://www.bitchute.com/channels/";
 
             public static string _settings = "https://www.bitchute.com/settings/";
         }

@@ -86,7 +86,7 @@ namespace BottomNavigationViewPager.Fragments
 
             }
 
-            if (AppSettings._zoomControl)
+            if (TheFragment5._zoomControl)
             {
                 _wv.Settings.BuiltInZoomControls = true;
                 _wv.Settings.DisplayZoomControls = false;
@@ -96,19 +96,20 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.Settings.BuiltInZoomControls = false;
             }
 
-            if (AppSettings._tab3Hide)
+            if (TheFragment5._tab3Hide)
             {
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
 
-                _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
 
-                _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab2);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
 
-                _wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                //_wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
+
+                //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
             }
-        
         }
 
         public static MainActivity _main = new MainActivity();
@@ -163,6 +164,21 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        public static bool _showMoreTimeout = false;
+
+        public void ShowMore()
+        {
+            if (!_showMoreTimeout)
+            {
+                _showMoreTimeout = true;
+                System.Threading.Thread.Sleep(5000);
+                _wv.LoadUrl(Globals.JavascriptCommands._jqShowMore);
+
+                _showMoreTimeout = false;
+
+            }
+        }
+
         public class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
@@ -173,17 +189,19 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
 
-                if (AppSettings._tab3Hide)
+                if (TheFragment5._tab3Hide)
                 {
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
 
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
 
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab2);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
 
                     _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
 
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
+
+                    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
                 }
                 SetReload();
             }
