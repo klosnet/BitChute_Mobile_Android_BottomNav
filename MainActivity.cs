@@ -158,7 +158,7 @@ namespace BottomNavigationViewPager
                 _navTimer++;
                 if (_navTimer == 8)
                 {
-                    _navigationView.Visibility = ViewStates.Visible;
+                    _navigationView.Visibility = ViewStates.Gone;
                     _navTimeout = false;
                     _navHidden = true;
                 }

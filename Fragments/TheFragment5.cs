@@ -240,6 +240,10 @@ namespace BottomNavigationViewPager.Fragments
 
         }
 
+        /// <summary>
+        /// shows the app specific settings menu
+        /// when user long presses "settings" tab
+        /// </summary>
         public void ShowAppSettingsMenu()
         {
             if (_wvLayout.Visibility == ViewStates.Visible)
