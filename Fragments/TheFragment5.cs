@@ -143,11 +143,7 @@ namespace BottomNavigationViewPager.Fragments
                 _stoverrideonrb.CheckedChange += OnTab5OverrideChanged;
                 _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSelectionChanged;
                 _tab5OverrideSpinner.ItemSelected += OnTab5OverrideSelectionChanged;
-
-                _zconrb.Checked = true;
-
                 
-
                 _tab4SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
                         Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
 
@@ -189,7 +185,6 @@ namespace BottomNavigationViewPager.Fragments
             TheFragment5._tab3Hide = _prefs.GetBoolean("tab3hide", true);
             TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
             TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
-            var _sto = TheFragment5._settingsTabOverride;
 
                 if (_zoomControl)
                 {
@@ -367,6 +362,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _tab4OverridePreference = _tab4OverrideSpinner.SelectedItem.ToString();
                 _main.TabDetailChanger(3, _tab4OverrideSpinner.SelectedItem.ToString());
+                Globals._t4Is = _tab4OverrideSpinner.SelectedItemId.ToString();
             }
         }
 
@@ -378,6 +374,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _tab5OverridePreference = _tab5OverrideSpinner.SelectedItem.ToString();
                 _main.TabDetailChanger(4, _tab5OverrideSpinner.SelectedItem.ToString());
+                Globals._t5Is = _tab5OverrideSpinner.SelectedItemId.ToString();
             }
         }
         public static Android.Content.ISharedPreferences _prefs;

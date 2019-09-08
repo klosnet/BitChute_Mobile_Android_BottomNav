@@ -99,7 +99,6 @@ namespace BottomNavigationViewPager
             _navigationView.LongClick += NavigationViewLongClickListener;
 
             _viewPager.OffscreenPageLimit = 4;
-
             
         }
 
@@ -142,7 +141,7 @@ namespace BottomNavigationViewPager
                 _navHidden = false;
                 NavBarRemove();
                 _navTimeout = true;
-                _fm3.ShowMore();
+               // _fm3.ShowMore();
             }
         }
 

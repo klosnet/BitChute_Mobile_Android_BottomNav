@@ -166,18 +166,18 @@ namespace BottomNavigationViewPager.Fragments
 
         public static bool _showMoreTimeout = false;
 
-        public void ShowMore()
-        {
-            if (!_showMoreTimeout)
-            {
-                _showMoreTimeout = true;
-                System.Threading.Thread.Sleep(5000);
-                _wv.LoadUrl(Globals.JavascriptCommands._jqShowMore);
+        //public void ShowMore()
+        //{
+        //    if (!_showMoreTimeout)
+        //    {
+        //        _showMoreTimeout = true;
+        //        System.Threading.Thread.Sleep(5000);
+        //        _wv.LoadUrl(Globals.JavascriptCommands._jqShowMore);
 
-                _showMoreTimeout = false;
+        //        _showMoreTimeout = false;
 
-            }
-        }
+        //    }
+        //}
 
         public class ExtWebViewClient : WebViewClient
         {

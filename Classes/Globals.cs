@@ -11,6 +11,18 @@ namespace BottomNavigationViewPager.Classes
         public static bool _setWebView { get; set; }
         public static bool _navIsTimingOut { get; set; }
         public static int _wvHeight { get; set; }
+
+        /// <summary>
+        /// tab 4 string should be set to strings like
+        /// "Subs" "Home" or "Feed"
+        /// </summary>
+        public static string _t4Is { get; set; }
+        
+        /// <summary>
+        /// tab 5 string should be set to strings like
+        /// "Subs" "Home" or "Feed"
+        /// </summary>
+        public static string _t5Is { get; set; }
         
         public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
              .Context.GetSystemService(Context.ActivityService);
