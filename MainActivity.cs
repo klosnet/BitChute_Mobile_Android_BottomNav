@@ -39,6 +39,7 @@ using Android.Graphics;
 using System.Threading.Tasks;
 using BottomNavigationViewPager.Classes;
 using static Android.Views.View;
+using Android.Views.InputMethods;
 
 //app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
 
@@ -51,33 +52,26 @@ namespace BottomNavigationViewPager
     public class MainActivity : FragmentActivity
     {
         int _tabSelected;
-
         ViewPager _viewPager;
         public static BottomNavigationView _navigationView;
         public static List<BottomNavigationItemView> _navViewItemList 
             = new List<BottomNavigationItemView>();
-
         IMenuItem _menu;
         Fragment[] _fragments;
-
         public static MainActivity _main;
-        
         public static Globals _globals = new Globals();
-
         public static bool _navBarHideTimeout = false;
+        public static bool _userIstyping = false;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             var _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
             
             TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
-
-            var check = TheFragment5._zoomControl;
             TheFragment5._fanMode = _prefs.GetBoolean("fanmode", false);
             TheFragment5._tab3Hide = _prefs.GetBoolean("tab3hide", true);
             TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
             TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
-            var cc = TheFragment5._settingsTabOverride;
 
             _main = this;
 
@@ -99,7 +93,6 @@ namespace BottomNavigationViewPager
             _navigationView.LongClick += NavigationViewLongClickListener;
 
             _viewPager.OffscreenPageLimit = 4;
-            
         }
 
         public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
@@ -117,6 +110,19 @@ namespace BottomNavigationViewPager
                 _fm4,
                 _fm5
             };
+        }
+        
+        public async void HideNavBarOnKeyboard()
+        {
+            await Task.Run(() =>
+            {
+                InputMethodManager inputManager = (InputMethodManager)this.GetSystemService(Context.InputMethodService);
+                var currentFocus = this.CurrentFocus;
+                if (currentFocus != null)
+                {
+
+                }
+            });
         }
 
         public static bool _navHidden = false;
@@ -163,6 +169,15 @@ namespace BottomNavigationViewPager
                     _navHidden = true;
                 }
             }
+        }
+
+        public async void ForceNavBarHide()
+        {
+            await Task.Run(() => 
+            {
+                _navTimer = 9;
+                _navigationView.Visibility = ViewStates.Gone;
+            });
         }
 
         public async void HideNavBarAfterDelay()

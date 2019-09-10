@@ -111,7 +111,7 @@ namespace BottomNavigationViewPager.Classes
             /// shows the carousel aka featured creators
             /// </summary>
             public static string _jsShowCarousel = "javascript:(function() { " +
-                "document.getElementById('carousel').style.display='inherit'; " + "})()";
+                "document.getElementById('carousel').style.display='block'; " + "})()";
             
             /// <summary>
             /// hides the listing all element

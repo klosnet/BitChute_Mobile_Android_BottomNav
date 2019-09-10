@@ -20,6 +20,7 @@ namespace BottomNavigationViewPager.Fragments
 
         protected static WebView _wv;
         protected static View _view;
+        protected static View _rootView;
 
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
@@ -79,8 +80,14 @@ namespace BottomNavigationViewPager.Fragments
             _wv.SetOnScrollChangeListener(new ExtScrollListener());
             //_wv.Touch += ViewOnTouch;
 
+            _rootView = _view.RootView;
+
+            _wv.AddOnLayoutChangeListener(new ExtLayoutListener());
+
             return _view;
         }
+
+        
 
         public void OnSettingsChanged(List<object> settings)
         {
@@ -121,28 +128,34 @@ namespace BottomNavigationViewPager.Fragments
         //{
         //    var test = "yo";
 
-        //   // _wv.ComputeScroll();
+        //    // _wv.ComputeScroll();
         //    //Globals._wvHeight = _wv.ContentHeight;
 
         //    //string message;
         //    switch (touchEventArgs.Event.Action & MotionEventActions.Mask)
         //    {
-
         //        case MotionEventActions.Down:
         //        case MotionEventActions.Move:
-        //            _main.CustomOnScroll();
         //            break;
-
         //        case MotionEventActions.Up:
-        //            //_main.HideNavBarAfterDelay();
+        //            _main.HideNavBarOnKeyboard();
         //            break;
 
         //        default:
         //            break;
         //    }
-
-            
         //}
+
+        public class ExtLayoutListener : Java.Lang.Object, View.IOnLayoutChangeListener
+        {
+            public void OnLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom)
+            {
+                if ((top - oldTop) > 200)
+                {
+                    _main.HideNavBarOnKeyboard();
+                }
+            }
+        }
 
         public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
         {
@@ -205,6 +218,14 @@ namespace BottomNavigationViewPager.Fragments
 
         private class ExtWebViewClient : WebViewClient
         {
+            
+
+            //testing?
+            public override void OnReceivedLoginRequest(WebView view, string realm, string account, string args)
+            {
+                base.OnReceivedLoginRequest(view, realm, account, args);
+            }
+            
             public override void OnPageFinished(WebView _view, string url)
             {
                 if (!TheFragment5._tab1FeaturedOn)
@@ -235,6 +256,7 @@ namespace BottomNavigationViewPager.Fragments
 
                 SetReload();
             }
+
         }
     }
 }
