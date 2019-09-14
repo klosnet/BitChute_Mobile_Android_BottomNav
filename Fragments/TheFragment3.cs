@@ -203,6 +203,8 @@ namespace BottomNavigationViewPager.Fragments
 
                     //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
                 }
+                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+
                 SetReload();
             }
         }

@@ -232,6 +232,7 @@ namespace BottomNavigationViewPager.Fragments
                 {
                     _wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 }
+                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
 
                 SetReload();
             }

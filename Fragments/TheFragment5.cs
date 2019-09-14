@@ -360,6 +360,8 @@ namespace BottomNavigationViewPager.Fragments
                         //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
                     }
                 }
+                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+
                 SetReload();
             }
         }
@@ -395,6 +397,8 @@ namespace BottomNavigationViewPager.Fragments
 
         public void OnTab5OverrideSelectionChanged(object sender, EventArgs e)
         {
+            _stoverrideonrb.Checked = true;
+
             _tab5OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
 
             if (_tab5OverrideSpinner != null)

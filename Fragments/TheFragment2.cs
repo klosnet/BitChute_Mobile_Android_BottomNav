@@ -146,6 +146,8 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
 
+                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+
                 SetReload();
             }
         }
