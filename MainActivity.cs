@@ -39,6 +39,7 @@ using Android.Graphics;
 using System.Threading.Tasks;
 using BottomNavigationViewPager.Classes;
 using static Android.Views.View;
+using Android.Graphics.Drawables;
 
 //app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
 
@@ -58,7 +59,10 @@ namespace BottomNavigationViewPager
             = new List<BottomNavigationItemView>();
 
         IMenuItem _menu;
+        public static Drawable _tab4Icon;
+        public static Drawable _tab5Icon;
         Fragment[] _fragments;
+        
 
         public static MainActivity _main;
         
@@ -69,15 +73,12 @@ namespace BottomNavigationViewPager
         protected override void OnCreate(Bundle savedInstanceState)
         {
             var _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
-            
-            TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
 
-            var check = TheFragment5._zoomControl;
+            TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
             TheFragment5._fanMode = _prefs.GetBoolean("fanmode", false);
             TheFragment5._tab3Hide = _prefs.GetBoolean("tab3hide", true);
             TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
             TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
-            var cc = TheFragment5._settingsTabOverride;
 
             _main = this;
 
@@ -245,13 +246,15 @@ namespace BottomNavigationViewPager
 
             if (TheFragment5._fanMode)
             {
-                _navigationView.Menu.GetItem(3).SetTitle(TheFragment5._tab4OverridePreference);
+                _navViewItemList[3].SetTitle(TheFragment5._tab4OverridePreference);
+                _navViewItemList[3].SetIcon(_tab4Icon);
             }
             if (TheFragment5._settingsTabOverride)
             {
-                _navigationView.Menu.GetItem(4).SetTitle(TheFragment5._tab5OverridePreference);
+                _navViewItemList[4].SetTitle(TheFragment5._tab5OverridePreference);
+                _navViewItemList[4].SetIcon(_tab5Icon);
             }
-                CustomOnScroll();
+            CustomOnScroll();
         }
 
         //BottomNavigationView.NavigationItemReselectedEventArgs
@@ -274,7 +277,6 @@ namespace BottomNavigationViewPager
                     // set once again checked value, so view will be updated
                     item.SetChecked(item.ItemData.IsChecked);
                     item.LongClick += NavigationViewLongClickListener;
-
                     
                     if (_navViewItemList != null)
                     {
@@ -303,7 +305,6 @@ namespace BottomNavigationViewPager
             _fm3.OnSettingsChanged(oa);
             _fm4.OnSettingsChanged(oa);
             _fm5.OnSettingsChanged(oa);
-           
         }
 
         /// <summary>
@@ -329,28 +330,39 @@ namespace BottomNavigationViewPager
                         if (changeDetails == "" || changeDetails == null)
                         {
                             _navViewItemList[tab].SetTitle("Subs");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
+                            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
                             TheFragment4._url = Globals.URLs._subspage;
                         }
                         if (changeDetails == "Home")
                         {
                             _navViewItemList[tab].SetTitle("Home");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_home));
+                            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_home);
                             TheFragment4._url = Globals.URLs._homepage;
                         }
                         if (changeDetails == "Subs")
                         {
                             _navViewItemList[tab].SetTitle("Subs");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
+                            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
                             TheFragment4._url = Globals.URLs._subspage;
                         }
                         if (changeDetails == "Feed")
                         {
                             _navViewItemList[tab].SetTitle("Feed");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_playlists));
+                            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_playlists);
                             TheFragment4._url = Globals.URLs._homepage;
                         }
                         if (changeDetails == "Explore")
                         {
                             _navViewItemList[tab].SetTitle("Explore");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
+                            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
                             TheFragment4._url = Globals.URLs._explore;
                         }
+                        _fm4.Pop2Root();
                     }
                     break;
                 case 4:
@@ -359,23 +371,39 @@ namespace BottomNavigationViewPager
                         if (changeDetails == "" || changeDetails == null)
                         {
                             _navViewItemList[tab].SetTitle("Subs");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
+                            _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
                             TheFragment5._url = Globals.URLs._subspage;
+                        }
+                        if (changeDetails == "Home")
+                        {
+                            _navViewItemList[tab].SetTitle("Home");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_home));
+                            _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_home);
+                            TheFragment5._url = Globals.URLs._homepage;
                         }
                         if (changeDetails == "Subs")
                         {
                             _navViewItemList[tab].SetTitle("Subs");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
+                            _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
                             TheFragment5._url = Globals.URLs._subspage;
                         }
                         if (changeDetails == "Feed")
                         {
                             _navViewItemList[tab].SetTitle("Feed");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_playlists));
+                            _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_playlists);
                             TheFragment5._url = Globals.URLs._homepage;
                         }
                         if (changeDetails == "Explore")
                         {
                             _navViewItemList[tab].SetTitle("Explore");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
+                            _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
                             TheFragment5._url = Globals.URLs._explore;
                         }
+                        _fm5.Pop2Root();
                     }
                     break;
             }

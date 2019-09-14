@@ -178,6 +178,8 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        public bool _isNowCheckingBoxes = false;
+
         public void SetCheckedState()
         {
             TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
@@ -186,6 +188,7 @@ namespace BottomNavigationViewPager.Fragments
             TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
             TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
 
+            _isNowCheckingBoxes = true;
                 if (_zoomControl)
                 {
 
@@ -237,7 +240,7 @@ namespace BottomNavigationViewPager.Fragments
                     _stoverrideoffrb.Checked = true;
                     _stoverrideonrb.Checked = false;
                 }
-
+            _isNowCheckingBoxes = false;
         }
 
         /// <summary>
@@ -393,80 +396,82 @@ namespace BottomNavigationViewPager.Fragments
         /// <param name="e"></param>
         public void ExtSettingChanged(object sender, EventArgs e)
         {
-
-            if (_tab4OverrideSpinner.SelectedItem == null)
+            if (!_isNowCheckingBoxes)
             {
-                return;
-            }
-            _tab4OverridePreference = _tab4OverrideSpinner.SelectedItem.ToString();
-            _tab5OverridePreference = _tab5OverrideSpinner.SelectedItem.ToString();
+                if (_tab4OverrideSpinner.SelectedItem == null)
+                {
+                    return;
+                }
+                _tab4OverridePreference = _tab4OverrideSpinner.SelectedItem.ToString();
+                _tab5OverridePreference = _tab5OverrideSpinner.SelectedItem.ToString();
 
-            var prefEditor = _prefs.Edit();
-            if (tabLoaded)
-            {
-                if (_zconrb.Checked)
+                var prefEditor = _prefs.Edit();
+                if (tabLoaded)
                 {
-                    _zoomControl = true;
-                }
-                else
-                {
-                    _zoomControl = false;
-                }
+                    if (_zconrb.Checked)
+                    {
+                        _zoomControl = true;
+                    }
+                    else
+                    {
+                        _zoomControl = false;
+                    }
 
-                if (_fmonrb.Checked)
-                {
-                    _fanMode = true;
+                    if (_fmonrb.Checked)
+                    {
+                        _fanMode = true;
 
-                    _main.TabDetailChanger(3, _tab4OverridePreference);
-                }
-                else
-                {
-                    _fanMode = false;
-                }
-                if (_t3honrb.Checked)
-                {
-                    _tab3Hide = true;
-                }
-                else
-                {
-                    _tab3Hide = false;
-                }
-                if (_t1fonrb.Checked)
-                {
-                    _tab1FeaturedOn = true;
-                }
-                else
-                {
-                    _tab1FeaturedOn = false;
-                }
-                if (_stoverrideonrb.Checked)
-                {
-                    _settingsTabOverride = true;
+                        _main.TabDetailChanger(3, _tab4OverridePreference);
+                    }
+                    else
+                    {
+                        _fanMode = false;
+                    }
+                    if (_t3honrb.Checked)
+                    {
+                        _tab3Hide = true;
+                    }
+                    else
+                    {
+                        _tab3Hide = false;
+                    }
+                    if (_t1fonrb.Checked)
+                    {
+                        _tab1FeaturedOn = true;
+                    }
+                    else
+                    {
+                        _tab1FeaturedOn = false;
+                    }
+                    if (_stoverrideonrb.Checked)
+                    {
+                        _settingsTabOverride = true;
 
-                    _main.TabDetailChanger(4, _tab5OverridePreference);
+                        _main.TabDetailChanger(4, _tab5OverridePreference);
+                    }
+                    else
+                    {
+                        _settingsTabOverride = false;
+
+                    }
+
+                    prefEditor.PutBoolean("zoomcontrol", _zoomControl);
+                    prefEditor.PutBoolean("fanmode", _fanMode);
+                    prefEditor.PutBoolean("tab3hide", _tab3Hide);
+                    prefEditor.PutBoolean("t1featured", _tab1FeaturedOn);
+                    var ch = _settingsTabOverride;
+                    prefEditor.PutBoolean("settingstaboverride", _settingsTabOverride);
+                    prefEditor.Commit();
+
+                    _settingsList.Clear();
+                    _settingsList.Add(_zoomControl);
+                    _settingsList.Add(_fanMode);
+                    _settingsList.Add(_tab3Hide);
+                    _settingsList.Add(_tab1FeaturedOn);
+                    _settingsList.Add(_settingsTabOverride);
+
+                    _main.OnSettingsChanged(_settingsList);
                 }
-                else
-                {
-                    _settingsTabOverride = false;
-
-                }
-
-                prefEditor.PutBoolean("zoomcontrol", _zoomControl);
-                prefEditor.PutBoolean("fanmode", _fanMode);
-                prefEditor.PutBoolean("tab3hide", _tab3Hide);
-                prefEditor.PutBoolean("t1featured", _tab1FeaturedOn);
-                var ch = _settingsTabOverride;
-                prefEditor.PutBoolean("settingstaboverride", _settingsTabOverride);
-                prefEditor.Commit();
-
-                _settingsList.Clear();
-                _settingsList.Add(_zoomControl);
-                _settingsList.Add(_fanMode);
-                _settingsList.Add(_tab3Hide);
-                _settingsList.Add(_tab1FeaturedOn);
-                _settingsList.Add(_settingsTabOverride);
-
-                _main.OnSettingsChanged(_settingsList);
             }
         }
     }
