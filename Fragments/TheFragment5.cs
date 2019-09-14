@@ -217,7 +217,7 @@ namespace BottomNavigationViewPager.Fragments
                 }
                 else
                 {
-                    _t1foffrb.Checked = true;
+                    _t1foffrb.Checked = false;
                     _t1fonrb.Checked = true;
                 }
                 if (_tab3Hide)
