@@ -339,6 +339,27 @@ namespace BottomNavigationViewPager.Fragments
         {
             public override void OnPageFinished(WebView view, string url)
             {
+                if (_settingsTabOverride)
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
+
+                    if (_tab5OverridePreference == "Feed")
+                    {
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
+
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
+
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
+
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
+
+                        //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                    }
+                }
                 SetReload();
             }
         }
@@ -354,8 +375,7 @@ namespace BottomNavigationViewPager.Fragments
                 _settingsTabOverride = false;
             }
             var prefEditor = _prefs.Edit();
-
-            var ch = _settingsTabOverride;
+            
             prefEditor.PutBoolean("settingstaboverride", _settingsTabOverride);
         }
 
@@ -459,7 +479,6 @@ namespace BottomNavigationViewPager.Fragments
                     prefEditor.PutBoolean("fanmode", _fanMode);
                     prefEditor.PutBoolean("tab3hide", _tab3Hide);
                     prefEditor.PutBoolean("t1featured", _tab1FeaturedOn);
-                    var ch = _settingsTabOverride;
                     prefEditor.PutBoolean("settingstaboverride", _settingsTabOverride);
                     prefEditor.Commit();
 

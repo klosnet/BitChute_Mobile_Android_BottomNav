@@ -178,7 +178,17 @@ namespace BottomNavigationViewPager.Fragments
 
                 if (Globals._t4Is == "Feed")
                 {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
 
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
+
+                    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
                 }
 
                 if (!TheFragment5._tab1FeaturedOn)
