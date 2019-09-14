@@ -2368,7 +2368,7 @@ namespace BottomNavigationViewPager
 			
 			// aapt resource value: 0x7f080037
 			public const int SYM = 2131230775;
-			
+
 			// aapt resource value: 0x7f0800c6
 			public const int _fanModeOffBtn = 2131230918;
 			
