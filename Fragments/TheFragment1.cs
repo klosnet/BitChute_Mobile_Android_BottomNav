@@ -84,7 +84,8 @@ namespace BottomNavigationViewPager.Fragments
 
         public void OnSettingsChanged(List<object> settings)
         {
-
+            var _check = Convert.ToBoolean(settings[0]);
+            var _cc = _check;
             _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
 
             if (Convert.ToBoolean(settings[3]))
