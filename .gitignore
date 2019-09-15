@@ -5,3 +5,16 @@
 /.vs
 /bin/Debug
 /obj
+/bin/Release/com.xamarin.example.BitChuteDebuggr.apk.mSYM
+/bin/Release/System.Xml.pdb
+/bin/Release/System.ServiceModel.Internals.pdb
+/bin/Release/System.Runtime.Serialization.pdb
+/bin/Release/System.pdb
+/bin/Release/System.Net.Http.pdb
+/bin/Release/System.Core.pdb
+/bin/Release/mscorlib.pdb
+/bin/Release/Mono.Security.pdb
+/bin/Release/Mono.Android.pdb
+/bin/Release/BottomNavigationViewPager.pdb
+/bin/Release/BottomNavigationViewPager.dll.mdb
+/bin/Release/BottomNavigationViewPager.dll

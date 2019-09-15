@@ -56,6 +56,9 @@ namespace BottomNavigationViewPager.Fragments
         public static RadioButton _stoverrideoffrb;
         public static RadioButton _stoverrideonrb;
 
+        public static Button _notificationTestButton;
+        public static int _count = 0;
+
         public static List<string> _tabOverrideStringList = new List<string>();
         ArrayAdapter<string> _tab4SpinOverrideAdapter;
         ArrayAdapter<string> _tab5SpinOverrideAdapter;
@@ -135,6 +138,7 @@ namespace BottomNavigationViewPager.Fragments
                 _stoverrideonrb = _view.FindViewById<RadioButton>(Resource.Id._stOverrideOnRb);
                 _tab4OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab4OverrideSpinner);
                 _tab5OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
+                _notificationTestButton = _view.FindViewById<Button>(Resource.Id._notificationTestButton);
 
                 _zcoffrb.CheckedChange += ExtSettingChanged;
                 _fmonrb.CheckedChange += ExtSettingChanged;
@@ -143,6 +147,8 @@ namespace BottomNavigationViewPager.Fragments
                 _stoverrideonrb.CheckedChange += OnTab5OverrideChanged;
                 _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSelectionChanged;
                 _tab5OverrideSpinner.ItemSelected += OnTab5OverrideSelectionChanged;
+                _notificationTestButton.Click += ButtonOnClick;
+
                 
                 _tab4SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
                         Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
@@ -334,7 +340,48 @@ namespace BottomNavigationViewPager.Fragments
                 _wvRling = false;
             }
         }
-        
+
+        void ButtonOnClick(object sender, EventArgs eventArgs)
+        {
+
+            var _ctx = Android.App.Application.Context;
+
+
+            // Pass the current button press count value to the next activity:
+            var valuesForActivity = new Bundle();
+            valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
+
+            // When the user clicks the notification, SecondActivity will start up.
+            var resultIntent = new Intent(_ctx, typeof(TheFragment1));
+
+            // Pass some values to SecondActivity:
+            resultIntent.PutExtras(valuesForActivity);
+
+            // Construct a back stack for cross-task navigation:
+            var stackBuilder = TaskStackBuilder.Create(_ctx);
+            //stackBuilder.AddParentStack(Class.FromType(typeof(MainActivity)));
+            stackBuilder.AddNextIntent(resultIntent);
+
+            // Create the PendingIntent with the back stack:
+            var resultPendingIntent = stackBuilder.GetPendingIntent(0, (int)Android.App.PendingIntentFlags.UpdateCurrent);
+
+            // Build the notification:
+            var builder = new NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
+                          .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                          .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
+                          .SetContentTitle("Button Clicked") // Set the title
+                          .SetNumber(_count) // Display the count in the Content Info
+                          .SetSmallIcon(Resource.Drawable.tab_playlists) // This is the icon to display
+                          .SetContentText($"The button has been clicked {_count} times."); // the message to display.
+
+            // Finally, publish the notification:
+            var notificationManager = NotificationManagerCompat.From(_ctx);
+            notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
+
+            // Increment the button press count:
+            _count++;
+        }
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)

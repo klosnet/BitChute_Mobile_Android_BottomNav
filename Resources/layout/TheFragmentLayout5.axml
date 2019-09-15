@@ -208,6 +208,11 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/linearLayout9">
+			<Button
+				android:text="Test Notifications"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/_notificationTestButton" />
 		</LinearLayout>
 	<GridLayout
 		android:minWidth="30px"
