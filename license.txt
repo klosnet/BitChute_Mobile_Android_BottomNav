@@ -1,3 +1,7 @@
+this license only applies to the code contained in this github repository.
+You must contact Ray Vahey or Rich to get the status of BitChute website code
+licensing.
+
 MIT License
 
 Copyright (c) 2019 BitChute Ltd (Ray Vahey & Rich ? ) && Vybemasterz Ent (soundcloud.com/vybemasterz)

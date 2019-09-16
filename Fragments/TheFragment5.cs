@@ -2,12 +2,18 @@
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V4.App;
+using Android.Util;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using BottomNavigationViewPager.Classes;
+using Java.Interop;
+using Java.Net;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace BottomNavigationViewPager.Fragments
@@ -57,7 +63,12 @@ namespace BottomNavigationViewPager.Fragments
         public static RadioButton _stoverrideonrb;
 
         public static Button _notificationTestButton;
+        public static Android.App.PendingIntentFlags _flags = new Android.App.PendingIntentFlags() ;
         public static int _count = 0;
+        //public ExtNotifications _extNotifications = new ExtNotifications();
+        public static ExtWebInterface _extWebInterface = new ExtWebInterface();
+        public static WebView _notificationWebView;
+        public static TextView _notificationTextView;
 
         public static List<string> _tabOverrideStringList = new List<string>();
         ArrayAdapter<string> _tab4SpinOverrideAdapter;
@@ -98,6 +109,7 @@ namespace BottomNavigationViewPager.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+
             _view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
 
             _wv = _view.FindViewById<WebView>(Resource.Id.webView5);
@@ -105,6 +117,9 @@ namespace BottomNavigationViewPager.Fragments
             _wvLayout = _view.FindViewById<LinearLayout>(Resource.Id.webViewLayout);
             _appSettingsLayout = _view.FindViewById<LinearLayout>(Resource.Id.appSettingsMainLayout);
             //var _view2 = inflater.Inflate(Resource.Layout.SettingsFragmentLayout, container, false);
+
+            var _ctx = Android.App.Application.Context;
+
 
             if (!tabLoaded)
             {
@@ -122,8 +137,6 @@ namespace BottomNavigationViewPager.Fragments
 
                 //_wv.Settings.AllowContentAccess = true;
                 
-                var _ctx = Android.App.Application.Context;
-          
                 _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
                 
                 _zcoffrb = _view.FindViewById<RadioButton>(Resource.Id._zoomControlOffBtn);
@@ -139,6 +152,8 @@ namespace BottomNavigationViewPager.Fragments
                 _tab4OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab4OverrideSpinner);
                 _tab5OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
                 _notificationTestButton = _view.FindViewById<Button>(Resource.Id._notificationTestButton);
+                _notificationTextView = _view.FindViewById<TextView>(Resource.Id.httpRequestTextView);
+                _notificationWebView = _view.FindViewById<WebView>(Resource.Id._notificationWebView);
 
                 _zcoffrb.CheckedChange += ExtSettingChanged;
                 _fmonrb.CheckedChange += ExtSettingChanged;
@@ -147,7 +162,7 @@ namespace BottomNavigationViewPager.Fragments
                 _stoverrideonrb.CheckedChange += OnTab5OverrideChanged;
                 _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSelectionChanged;
                 _tab5OverrideSpinner.ItemSelected += OnTab5OverrideSelectionChanged;
-                _notificationTestButton.Click += ButtonOnClick;
+                _notificationTestButton.Click += ExtNotificationEvents;
 
                 
                 _tab4SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
@@ -167,6 +182,16 @@ namespace BottomNavigationViewPager.Fragments
             _appSettingsLayout.Visibility = ViewStates.Gone;
 
             SetCheckedState();
+
+            NotificationTimer();
+           
+            
+
+            _notificationWebView.SetWebViewClient(new NotificationWebClient());
+            _notificationWebView.Settings.DomStorageEnabled = true;
+            _notificationWebView.AddJavascriptInterface(new Foo(_ctx), "Foo");
+
+            _notificationWebView.LoadUrl("https://www.bitchute.com/notifications/");
 
             return _view;
         }
@@ -188,11 +213,15 @@ namespace BottomNavigationViewPager.Fragments
 
         public void SetCheckedState()
         {
+            _tab4OverridePreference = _prefs.GetString("tab4overridestring", "MyChannel");
+            _tab5OverridePreference = _prefs.GetString("settingstaboverridestring", "Settings");
+
             TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
             TheFragment5._fanMode = _prefs.GetBoolean("fanmode", false);
             TheFragment5._tab3Hide = _prefs.GetBoolean("tab3hide", true);
             TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
             TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
+
 
             _isNowCheckingBoxes = true;
                 if (_zoomControl)
@@ -246,7 +275,60 @@ namespace BottomNavigationViewPager.Fragments
                     _stoverrideoffrb.Checked = true;
                     _stoverrideonrb.Checked = false;
                 }
-            _isNowCheckingBoxes = false;
+                switch (_prefs.GetString("settingstaboverridestring", "Settings"))
+                {
+                    case "Home":
+                    _tab5OverrideSpinner.SetSelection(0);
+                        break;
+                case "Subs":
+                    _tab5OverrideSpinner.SetSelection(1);
+                    break;
+                case "Feed":
+                    _tab5OverrideSpinner.SetSelection(2);
+                    break;
+                case "Explore":
+                    _tab5OverrideSpinner.SetSelection(3);
+                        break;
+                case "Settings":
+                    _tab5OverrideSpinner.SetSelection(4);
+                    break;
+                case "MyChannel":
+                    _tab5OverrideSpinner.SetSelection(5);
+                    break;
+
+
+
+            //_tabOverrideStringList.Add("Home");
+            //        _tabOverrideStringList.Add("Subs");
+            //        _tabOverrideStringList.Add("Feed");
+            //        _tabOverrideStringList.Add("Explore");
+            //        _tabOverrideStringList.Add("Settings");
+            //        _tabOverrideStringList.Add("MyChannel");
+            }
+            switch (_prefs.GetString("tab4overridestring", "MyChannel"))
+            {
+                case "Home":
+                    _tab5OverrideSpinner.SetSelection(0);
+                    break;
+                case "Subs":
+                    _tab5OverrideSpinner.SetSelection(1);
+                    break;
+                case "Feed":
+                    _tab5OverrideSpinner.SetSelection(2);
+                    break;
+                case "Explore":
+                    _tab5OverrideSpinner.SetSelection(3);
+                        break;
+                case "Settings":
+                    _tab5OverrideSpinner.SetSelection(4);
+                    break;
+                case "MyChannel":
+                    _tab5OverrideSpinner.SetSelection(5);
+                    break;
+
+            }
+
+                    _isNowCheckingBoxes = false;
         }
 
         /// <summary>
@@ -341,12 +423,21 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        void ButtonOnClick(object sender, EventArgs eventArgs)
+        public void GetPendingIntent()
+        {
+            List<object> list = new List<object>();
+
+            int zero = 0;
+            list.Add(zero);
+            var update = Android.App.PendingIntentFlags.UpdateCurrent;
+            list.Add(update);
+        }
+
+        public void ExtNotificationEvents(object sender, EventArgs eventArgs)
         {
 
             var _ctx = Android.App.Application.Context;
-
-
+            
             // Pass the current button press count value to the next activity:
             var valuesForActivity = new Bundle();
             valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
@@ -362,24 +453,70 @@ namespace BottomNavigationViewPager.Fragments
             //stackBuilder.AddParentStack(Class.FromType(typeof(MainActivity)));
             stackBuilder.AddNextIntent(resultIntent);
 
+            _fm5.GetPendingIntent();
+
+            int _zero = 0;
+
             // Create the PendingIntent with the back stack:
             var resultPendingIntent = stackBuilder.GetPendingIntent(0, (int)Android.App.PendingIntentFlags.UpdateCurrent);
 
             // Build the notification:
-            var builder = new NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
+            var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
                           .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
                           .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
                           .SetContentTitle("Button Clicked") // Set the title
                           .SetNumber(_count) // Display the count in the Content Info
-                          .SetSmallIcon(Resource.Drawable.tab_playlists) // This is the icon to display
+                          .SetSmallIcon(Resource.Drawable.bitchute_notification2) // This is the icon to display
                           .SetContentText($"The button has been clicked {_count} times."); // the message to display.
 
             // Finally, publish the notification:
-            var notificationManager = NotificationManagerCompat.From(_ctx);
+            var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
             notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
+
 
             // Increment the button press count:
             _count++;
+        }
+
+        public static bool _appNotifications = true;
+
+        public async void NotificationTimer()
+        {
+            while (_appNotifications)
+            {
+                await Task.Delay(60000);
+                _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
+                //IValueCallback iCall;
+                //_notificationWebView.EvaluateJavascript("document.body.innerHTML", iCall);
+                //var _checker2 = _yo;
+            }
+        }
+
+        class Foo : Java.Lang.Object
+        {
+            Context context;
+
+            public Foo(Context context)
+            {
+                this.context = context;
+            }
+            [JavascriptInterface]
+            [Export]
+            public void showSource(string html)
+            {
+                Log.Error("content", html);//here html is the HTML code
+                var _h = html;
+            }
+        }
+
+        private class NotificationWebClient : WebViewClient
+        {
+            public override void OnPageFinished(WebView view, string url)
+            {
+            //    _notificationWebView.LoadUrl("javascript:window.Foo.showSource("
+            //                 + "document.getElementsByTagName('html')[0].innerHTML);");
+                base.OnPageFinished(view, url);
+            }
         }
 
         private class ExtWebViewClient : WebViewClient
@@ -531,6 +668,8 @@ namespace BottomNavigationViewPager.Fragments
                     prefEditor.PutBoolean("tab3hide", _tab3Hide);
                     prefEditor.PutBoolean("t1featured", _tab1FeaturedOn);
                     prefEditor.PutBoolean("settingstaboverride", _settingsTabOverride);
+                    prefEditor.PutString("settingstaboverridestring", _tab5OverridePreference);
+                    prefEditor.PutString("tab4overridestring", _tab4OverridePreference);
                     prefEditor.Commit();
 
                     _settingsList.Clear();
@@ -539,9 +678,66 @@ namespace BottomNavigationViewPager.Fragments
                     _settingsList.Add(_tab3Hide);
                     _settingsList.Add(_tab1FeaturedOn);
                     _settingsList.Add(_settingsTabOverride);
+                    _settingsList.Add(_tab4OverridePreference);
+                    _settingsList.Add(_tab5OverridePreference);
 
                     _main.OnSettingsChanged(_settingsList);
                 }
+            }
+        }
+
+        public static string _rawNoteText = "";
+
+        public class ExtWebInterface
+        {
+            private HttpClient _client;
+
+            public ExtWebInterface()
+            {
+                _client = new HttpClient();
+            }
+
+            public ExtWebInterface(HttpClient httpClient)
+            {
+                _client = httpClient;
+            }
+
+            public static string _notificationRawText;
+
+            public static CookieSyncManager _csm;
+
+            public async void GetNotificationText(string url)
+            {
+                await Task.Run(() =>
+                {
+                    var _ctxxx = Android.App.Application.Context;
+                    _csm = CookieSyncManager.CreateInstance(_ctxxx);
+                    _csm.Sync();
+                    
+                    var cookies = Android.Webkit.CookieManager.Instance.GetCookie("https://bitchute.com/subscriptions/");
+                    URL _url2 = new URL("https://bitchute.com/notifications/");
+                    HttpURLConnection conn = (HttpURLConnection)_url2.OpenConnection();
+                    
+                    conn.ReadTimeout = 10000 /* milliseconds */;
+                    conn.ConnectTimeout = 15000 /* milliseconds */;
+                    conn.SetRequestProperty("Cookie", cookies);
+                    conn.Connect();
+
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                    
+                    request.AutomaticDecompression = DecompressionMethods.GZip;
+
+                    using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                    using (Stream stream = response.GetResponseStream())
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        _notificationRawText = reader.ReadToEnd();
+                        Console.WriteLine(_notificationRawText);
+                        _rawNoteText = _notificationRawText;
+                    }
+                    
+                });
+                
             }
         }
     }

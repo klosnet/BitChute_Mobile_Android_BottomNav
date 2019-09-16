@@ -61,6 +61,7 @@ using BottomNavigationViewPager.Classes;
 using static Android.Views.View;
 using Android.Graphics.Drawables;
 using System.Net;
+using Java.Net;
 
 //app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
 
@@ -95,7 +96,7 @@ namespace BottomNavigationViewPager
         
         
         public static Globals _globals = new Globals();
-
+        public static ExtNotifications _notifications = new ExtNotifications();
         public static bool _navBarHideTimeout = false;
 
         //notification items:
@@ -105,6 +106,10 @@ namespace BottomNavigationViewPager
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            var _ctx = Android.App.Application.Context;
+            CookieHandler.Default = new Java.Net.CookieManager(); // Apparently for some folks this line works already, for me on Android 17 it does not.
+            CookieSyncManager.CreateInstance(_ctx); // or app will crash when requesting cookie
+
             var _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
 
             TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
@@ -487,6 +492,19 @@ namespace BottomNavigationViewPager
 
             var notificationManager = (Android.App.NotificationManager)GetSystemService(NotificationService);
             notificationManager.CreateNotificationChannel(channel);
+        }
+
+        public static bool _notifying = true;
+
+        public async void NotificationTimer()
+        {
+            while (_notifying)
+            {
+                await Task.Delay(20000);
+
+               // _notifications.ExtNotificatonEvents();
+            }
+
         }
 
         protected override void OnDestroy()

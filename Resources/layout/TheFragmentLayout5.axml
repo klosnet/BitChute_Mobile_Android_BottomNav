@@ -213,19 +213,28 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:id="@+id/_notificationTestButton" />
+			<android.webkit.WebView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/_notificationWebView" />
+			<TextView
+				android:text="Text"
+				android:id="@+id/httpRequestTextView"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
 		</LinearLayout>
-	<GridLayout
-		android:minWidth="30px"
-		android:minHeight="30px"
-		xmlns:p1="http://schemas.android.com/apk/res/android"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/gridLayout1">
+		<GridLayout
+			android:minWidth="30px"
+			android:minHeight="30px"
+			xmlns:p1="http://schemas.android.com/apk/res/android"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/gridLayout1">
 			<ListView
 				android:minWidth="25px"
 				android:minHeight="25px"
 				android:id="@+id/listView1" />
-	</GridLayout>
+		</GridLayout>
 
 </LinearLayout>
 
