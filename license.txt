@@ -1,6 +1,4 @@
-This License applies only to the Android app (the source code contained in this repo); I cannot vouch for the license state of the website itself.  You must contact Ray Vahey or Rich to get information on the website license.
-
-﻿MIT License
+MIT License
 
 Copyright (c) 2019 BitChute Ltd (Ray Vahey & Rich ? ) && Vybemasterz Ent (soundcloud.com/vybemasterz)
 
