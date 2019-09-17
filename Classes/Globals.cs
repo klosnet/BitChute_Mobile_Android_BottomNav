@@ -23,6 +23,12 @@ namespace BottomNavigationViewPager.Classes
         /// "Subs" "Home" or "Feed"
         /// </summary>
         public static string _t5Is { get; set; }
+
+        /// <summary>
+        /// this is a string containing cookies for the app.
+        /// WebView cookies don't transfer automatically to httprequests
+        /// </summary>
+        public static string _cookieString { get; set; }
         
         public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
              .Context.GetSystemService(Context.ActivityService);

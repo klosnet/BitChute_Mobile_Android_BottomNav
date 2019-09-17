@@ -63,16 +63,19 @@ namespace BottomNavigationViewPager.Fragments
         public static RadioButton _stoverrideonrb;
 
         public static Button _notificationTestButton;
-        public static Android.App.PendingIntentFlags _flags = new Android.App.PendingIntentFlags() ;
+        public static Android.App.PendingIntentFlags _flags = new Android.App.PendingIntentFlags();
         public static int _count = 0;
         //public ExtNotifications _extNotifications = new ExtNotifications();
         public static ExtWebInterface _extWebInterface = new ExtWebInterface();
         public static WebView _notificationWebView;
         public static TextView _notificationTextView;
+        public static bool _notificationHttpRequestInProgress = false;
 
         public static List<string> _tabOverrideStringList = new List<string>();
         ArrayAdapter<string> _tab4SpinOverrideAdapter;
         ArrayAdapter<string> _tab5SpinOverrideAdapter;
+
+        public static CookieCollection cookies = new CookieCollection();
 
         public static TheFragment5 _fm5;
 
@@ -109,7 +112,6 @@ namespace BottomNavigationViewPager.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-
             _view = inflater.Inflate(Resource.Layout.TheFragmentLayout5, container, false);
 
             _wv = _view.FindViewById<WebView>(Resource.Id.webView5);
@@ -119,7 +121,6 @@ namespace BottomNavigationViewPager.Fragments
             //var _view2 = inflater.Inflate(Resource.Layout.SettingsFragmentLayout, container, false);
 
             var _ctx = Android.App.Application.Context;
-
 
             if (!tabLoaded)
             {
@@ -163,7 +164,6 @@ namespace BottomNavigationViewPager.Fragments
                 _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSelectionChanged;
                 _tab5OverrideSpinner.ItemSelected += OnTab5OverrideSelectionChanged;
                 _notificationTestButton.Click += ExtNotificationEvents;
-
                 
                 _tab4SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
                         Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
@@ -178,20 +178,17 @@ namespace BottomNavigationViewPager.Fragments
                 tabLoaded = true;
             }
             _wv.SetOnScrollChangeListener(new ExtScrollListener());
-
             _appSettingsLayout.Visibility = ViewStates.Gone;
 
             SetCheckedState();
 
             NotificationTimer();
            
-            
-
             _notificationWebView.SetWebViewClient(new NotificationWebClient());
             _notificationWebView.Settings.DomStorageEnabled = true;
-            _notificationWebView.AddJavascriptInterface(new Foo(_ctx), "Foo");
+            //_notificationWebView.AddJavascriptInterface(new Foo(_ctx), "Foo");
 
-            _notificationWebView.LoadUrl("https://www.bitchute.com/notifications/");
+            //_notificationWebView.LoadUrl("https://www.bitchute.com/notifications/");
 
             return _view;
         }
@@ -275,29 +272,27 @@ namespace BottomNavigationViewPager.Fragments
                     _stoverrideoffrb.Checked = true;
                     _stoverrideonrb.Checked = false;
                 }
-                switch (_prefs.GetString("settingstaboverridestring", "Settings"))
+                switch (_tab4OverridePreference)
                 {
-                    case "Home":
-                    _tab5OverrideSpinner.SetSelection(0);
+                case "Home":
+                    _tab4OverrideSpinner.SetSelection(0);
                         break;
                 case "Subs":
-                    _tab5OverrideSpinner.SetSelection(1);
+                    _tab4OverrideSpinner.SetSelection(1);
                     break;
                 case "Feed":
-                    _tab5OverrideSpinner.SetSelection(2);
+                    _tab4OverrideSpinner.SetSelection(2);
                     break;
                 case "Explore":
-                    _tab5OverrideSpinner.SetSelection(3);
+                    _tab4OverrideSpinner.SetSelection(3);
                         break;
                 case "Settings":
-                    _tab5OverrideSpinner.SetSelection(4);
+                    _tab4OverrideSpinner.SetSelection(4);
                     break;
                 case "MyChannel":
-                    _tab5OverrideSpinner.SetSelection(5);
+                    _tab4OverrideSpinner.SetSelection(5);
                     break;
-
-
-
+                    
             //_tabOverrideStringList.Add("Home");
             //        _tabOverrideStringList.Add("Subs");
             //        _tabOverrideStringList.Add("Feed");
@@ -305,7 +300,7 @@ namespace BottomNavigationViewPager.Fragments
             //        _tabOverrideStringList.Add("Settings");
             //        _tabOverrideStringList.Add("MyChannel");
             }
-            switch (_prefs.GetString("tab4overridestring", "MyChannel"))
+            switch (_tab5OverridePreference)
             {
                 case "Home":
                     _tab5OverrideSpinner.SetSelection(0);
@@ -327,7 +322,6 @@ namespace BottomNavigationViewPager.Fragments
                     break;
 
             }
-
                     _isNowCheckingBoxes = false;
         }
 
@@ -484,8 +478,14 @@ namespace BottomNavigationViewPager.Fragments
         {
             while (_appNotifications)
             {
-                await Task.Delay(60000);
-                _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
+
+                if (!_notificationHttpRequestInProgress)
+                {
+                    _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
+                    
+                    await Task.Delay(60000);
+
+                }
                 //IValueCallback iCall;
                 //_notificationWebView.EvaluateJavascript("document.body.innerHTML", iCall);
                 //var _checker2 = _yo;
@@ -519,8 +519,12 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        public string _cookieString { get; set; }
+
         private class ExtWebViewClient : WebViewClient
         {
+            TheFragment5 _fm5 = new TheFragment5();
+
             public override void OnPageFinished(WebView view, string url)
             {
                 if (_settingsTabOverride)
@@ -547,6 +551,37 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
 
                 SetReload();
+
+                var cookieHeader = Android.Webkit.CookieManager.Instance.GetCookie(url);
+                Globals._cookieString = cookieHeader.ToString();
+                var cookiePairs = cookieHeader.Split('&');
+                _fm5._cookieString = "";
+
+                foreach (var cookiePair in cookiePairs)
+                {
+                    var cookiePieces = cookiePair.Split('=');
+                    if (cookiePieces[0].Contains(":"))
+                        cookiePieces[0] = cookiePieces[0].Substring(0, cookiePieces[0].IndexOf(":"));
+                    cookies.Add(new Cookie
+                    {
+                        Name = cookiePieces[0],
+                        Value = cookiePieces[1]
+                    });
+                }
+
+                foreach (Cookie c in cookies)
+                {
+                    if (_fm5._cookieString == "")
+                    {
+                        _fm5._cookieString = c.ToString();
+                    }
+                    else
+                    {
+                        _fm5._cookieString += c.ToString();
+                    }
+                }
+
+
             }
         }
 
@@ -690,52 +725,83 @@ namespace BottomNavigationViewPager.Fragments
 
         public class ExtWebInterface
         {
-            private HttpClient _client;
+            public static string _notificationRawText;
 
+            //public static System.Net.Http.HttpClient _client = new System.Net.Http.HttpClient(new HttpClientHandler() { CookieContainer = _cookieContainer });
+            
             public ExtWebInterface()
             {
-                _client = new HttpClient();
+                var _client = new HttpClient();
             }
 
             public ExtWebInterface(HttpClient httpClient)
             {
-                _client = httpClient;
+                var _client = httpClient;
+            }
+            
+            public async void HttpCookiedRequest(string url)
+            {
+                HttpWebRequest _httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+
+                Uri uri = new Uri(url);
+
+                _httpWebRequest.CookieContainer.SetCookies(uri, Globals._cookieString);
             }
 
-            public static string _notificationRawText;
+            public static CookieContainer _cookieCon = new CookieContainer();
 
-            public static CookieSyncManager _csm;
 
             public async void GetNotificationText(string url)
             {
+                //var _cmhc = _cookieMan.HasCookies;
                 await Task.Run(() =>
                 {
-                    var _ctxxx = Android.App.Application.Context;
-                    _csm = CookieSyncManager.CreateInstance(_ctxxx);
-                    _csm.Sync();
-                    
-                    var cookies = Android.Webkit.CookieManager.Instance.GetCookie("https://bitchute.com/subscriptions/");
-                    URL _url2 = new URL("https://bitchute.com/notifications/");
-                    HttpURLConnection conn = (HttpURLConnection)_url2.OpenConnection();
-                    
-                    conn.ReadTimeout = 10000 /* milliseconds */;
-                    conn.ConnectTimeout = 15000 /* milliseconds */;
-                    conn.SetRequestProperty("Cookie", cookies);
-                    conn.Connect();
 
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                    
-                    request.AutomaticDecompression = DecompressionMethods.GZip;
+                    _notificationHttpRequestInProgress = true;
 
-                    using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                    using (Stream stream = response.GetResponseStream())
-                    using (StreamReader reader = new StreamReader(stream))
+                    try
                     {
-                        _notificationRawText = reader.ReadToEnd();
-                        Console.WriteLine(_notificationRawText);
-                        _rawNoteText = _notificationRawText;
+                        var _ctxxx = Android.App.Application.Context;
+
+                        //URL _url2 = new URL("https://bitchute.com/notifications/");
+                        //HttpURLConnection conn = (HttpURLConnection)_url2.OpenConnection();
+
+                        
+
+                        //conn.ReadTimeout = 10000 /* milliseconds */;
+                        //conn.ConnectTimeout = 15000 /* milliseconds */;
+                        //conn.SetRequestProperty("Cookie", cookies);
+                        //conn.Connect();
+
+                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+
+                        Uri uri = new Uri(url);
+
+                        var _req = request;
+                        var _uriii = uri;
+                        var _cookiesss = _fm5._cookieString;
+
+                        _cookieCon.SetCookies(uri, _cookiesss);
+
+                        request.CookieContainer = _cookieCon;
+                        //request.CookieContainer.SetCookies(uri, _cookiesss);
+
+                        request.AutomaticDecompression = DecompressionMethods.GZip;
+
+                        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                        using (Stream stream = response.GetResponseStream())
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            _notificationRawText = reader.ReadToEnd();
+                            Console.WriteLine(_notificationRawText);
+                            _rawNoteText = _notificationRawText;
+                        }
                     }
-                    
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    _notificationHttpRequestInProgress = false;
                 });
                 
             }
