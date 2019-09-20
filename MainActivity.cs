@@ -95,7 +95,7 @@ namespace BottomNavigationViewPager
         public static MainActivity _main;
         
         public static Globals _globals = new Globals();
-        public static ExtNotifications _notifications = new ExtNotifications();
+        //public static ExtNotifications _notifications = new ExtNotifications();
         public static bool _navBarHideTimeout = false;
 
         //notification items:
@@ -105,6 +105,8 @@ namespace BottomNavigationViewPager
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            _main = this;
+
             var _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
 
             TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
@@ -112,6 +114,9 @@ namespace BottomNavigationViewPager
             TheFragment5._tab3Hide = _prefs.GetBoolean("tab3hide", true);
             TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
             TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
+
+            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
+            _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
 
             _main = this;
 
@@ -347,10 +352,12 @@ namespace BottomNavigationViewPager
         /// <summary>
         /// method to change any tab icon, title
         /// it takes the tab number integer and string change details
-        /// string can be null for now
+        /// string can be null for now can be null or blank, use "home" "feed" "subs" or "explore" with int s 3 & 4
+        /// int representing tab 0 is farthest left going up to the right
         /// </summary>
-        /// <param name="changeDetails">can be null or blank, use "home" "feed" "subs" or "explore" with int s 3 & 4</param>
-        /// <param name="tab">int representing tab 0 is farthest left going up to the right</param>
+        /// <param name="changeDetails"></param>
+        /// <param name="tab"></param>
+        /// 
         public void TabDetailChanger(int tab, string changeDetails)
         {
             switch (tab)
@@ -361,7 +368,7 @@ namespace BottomNavigationViewPager
                     break;
                 case 2:
                     break;
-                case 3:
+                case 3: 
                     if (TheFragment5._fanMode)
                     {
                         if (changeDetails == "" || changeDetails == null)
@@ -499,7 +506,6 @@ namespace BottomNavigationViewPager
 
                // _notifications.ExtNotificatonEvents();
             }
-
         }
 
         protected override void OnDestroy()

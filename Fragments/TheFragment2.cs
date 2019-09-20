@@ -18,6 +18,8 @@ namespace BottomNavigationViewPager.Fragments
 
         protected static WebView _wv;
 
+        public static string _url = "https://bitchute.com/subscriptions/";
+
         bool tabLoaded = false;
 
         public static TheFragment2 NewInstance(string title, string icon) {
@@ -54,7 +56,7 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
-                _wv.LoadUrl(@"https://www.bitchute.com/subscriptions/");
+                _wv.LoadUrl(_url);
 
                 _wv.Settings.JavaScriptEnabled = true;
 

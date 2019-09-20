@@ -44,7 +44,7 @@ namespace BottomNavigationViewPager.Fragments
 
         bool tabLoaded = false;
 
-        public static string _tab5Title = "";
+        public static string _tab5Title = "Settings";
         public static string _url = "https://www.bitchute.com/settings/";
 
         public static RadioButton _fmoffrb;
@@ -182,10 +182,10 @@ namespace BottomNavigationViewPager.Fragments
 
             SetCheckedState();
 
-            NotificationTimer();
+            //NotificationTimer();
            
-            _notificationWebView.SetWebViewClient(new NotificationWebClient());
-            _notificationWebView.Settings.DomStorageEnabled = true;
+            //_notificationWebView.SetWebViewClient(new NotificationWebClient());
+            //_notificationWebView.Settings.DomStorageEnabled = true;
             //_notificationWebView.AddJavascriptInterface(new Foo(_ctx), "Foo");
 
             //_notificationWebView.LoadUrl("https://www.bitchute.com/notifications/");
@@ -218,8 +218,7 @@ namespace BottomNavigationViewPager.Fragments
             TheFragment5._tab3Hide = _prefs.GetBoolean("tab3hide", true);
             TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
             TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
-
-
+            
             _isNowCheckingBoxes = true;
                 if (_zoomControl)
                 {
@@ -429,7 +428,6 @@ namespace BottomNavigationViewPager.Fragments
 
         public void ExtNotificationEvents(object sender, EventArgs eventArgs)
         {
-
             var _ctx = Android.App.Application.Context;
             
             // Pass the current button press count value to the next activity:
@@ -474,116 +472,51 @@ namespace BottomNavigationViewPager.Fragments
 
         public static bool _appNotifications = true;
 
-        public async void NotificationTimer()
-        {
-            while (_appNotifications)
-            {
+        //public async void NotificationTimer()
+        //{
+        //    while (_appNotifications)
+        //    {
 
-                if (!_notificationHttpRequestInProgress)
-                {
-                    _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
+        //        if (!_notificationHttpRequestInProgress)
+        //        {
+        //            //_extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
                     
-                    await Task.Delay(60000);
+        //            await Task.Delay(5000);
 
-                }
-                //IValueCallback iCall;
-                //_notificationWebView.EvaluateJavascript("document.body.innerHTML", iCall);
-                //var _checker2 = _yo;
-            }
-        }
+        //        }
+        //        //IValueCallback iCall;
+        //        //_notificationWebView.EvaluateJavascript("document.body.innerHTML", iCall);
+        //        //var _checker2 = _yo;
+        //    }
+        //}
 
-        class Foo : Java.Lang.Object
-        {
-            Context context;
+        //class Foo : Java.Lang.Object
+        //{
+        //    Context context;
 
-            public Foo(Context context)
-            {
-                this.context = context;
-            }
-            [JavascriptInterface]
-            [Export]
-            public void showSource(string html)
-            {
-                Log.Error("content", html);//here html is the HTML code
-                var _h = html;
-            }
-        }
+        //    public Foo(Context context)
+        //    {
+        //        this.context = context;
+        //    }
+        //    [JavascriptInterface]
+        //    [Export]
+        //    public void showSource(string html)
+        //    {
+        //        Log.Error("content", html);//here html is the HTML code
+        //        var _h = html;
+        //    }
+        //}
 
-        private class NotificationWebClient : WebViewClient
-        {
-            public override void OnPageFinished(WebView view, string url)
-            {
-            //    _notificationWebView.LoadUrl("javascript:window.Foo.showSource("
-            //                 + "document.getElementsByTagName('html')[0].innerHTML);");
-                base.OnPageFinished(view, url);
-            }
-        }
+        //private class NotificationWebClient : WebViewClient
+        //{
+        //    public override void OnPageFinished(WebView view, string url)
+        //    {
+        //    //    _notificationWebView.LoadUrl("javascript:window.Foo.showSource("
+        //    //                 + "document.getElementsByTagName('html')[0].innerHTML);");
+        //        base.OnPageFinished(view, url);
+        //    }
+        //}
 
-        public string _cookieString { get; set; }
-
-        private class ExtWebViewClient : WebViewClient
-        {
-            TheFragment5 _fm5 = new TheFragment5();
-
-            public override void OnPageFinished(WebView view, string url)
-            {
-                if (_settingsTabOverride)
-                {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
-
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
-
-                    if (_tab5OverridePreference == "Feed")
-                    {
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
-
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
-
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
-
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
-
-                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
-
-                        //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
-                    }
-                }
-                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
-
-                SetReload();
-
-                var cookieHeader = Android.Webkit.CookieManager.Instance.GetCookie(url);
-                Globals._cookieString = cookieHeader.ToString();
-                var cookiePairs = cookieHeader.Split('&');
-                _fm5._cookieString = "";
-
-                foreach (var cookiePair in cookiePairs)
-                {
-                    var cookiePieces = cookiePair.Split('=');
-                    if (cookiePieces[0].Contains(":"))
-                        cookiePieces[0] = cookiePieces[0].Substring(0, cookiePieces[0].IndexOf(":"));
-                    cookies.Add(new Cookie
-                    {
-                        Name = cookiePieces[0],
-                        Value = cookiePieces[1]
-                    });
-                }
-
-                foreach (Cookie c in cookies)
-                {
-                    if (_fm5._cookieString == "")
-                    {
-                        _fm5._cookieString = c.ToString();
-                    }
-                    else
-                    {
-                        _fm5._cookieString += c.ToString();
-                    }
-                }
-
-
-            }
-        }
 
         public void OnTab5OverrideChanged(object sender, EventArgs e)
         {
@@ -722,6 +655,70 @@ namespace BottomNavigationViewPager.Fragments
         }
 
         public static string _rawNoteText = "";
+        
+        public string _cookieString { get; set; }
+
+        private class ExtWebViewClient : WebViewClient
+        {
+            TheFragment5 _fm5 = new TheFragment5();
+
+            public override void OnPageFinished(WebView view, string url)
+            {
+                if (_settingsTabOverride)
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
+
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
+
+                    if (_tab5OverridePreference == "Feed")
+                    {
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
+
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
+
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
+
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
+
+                        _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
+
+                        //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                    }
+                }
+                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+
+                SetReload();
+
+                //var cookieHeader = Android.Webkit.CookieManager.Instance.GetCookie(url);
+                //Globals._cookieString = cookieHeader.ToString();
+                //var cookiePairs = cookieHeader.Split('&');
+                //_fm5._cookieString = "";
+
+                //foreach (var cookiePair in cookiePairs)
+                //{
+                //    var cookiePieces = cookiePair.Split('=');
+                //    if (cookiePieces[0].Contains(":"))
+                //        cookiePieces[0] = cookiePieces[0].Substring(0, cookiePieces[0].IndexOf(":"));
+                //    cookies.Add(new Cookie
+                //    {
+                //        Name = cookiePieces[0],
+                //        Value = cookiePieces[1]
+                //    });
+                //}
+
+                //foreach (Cookie c in cookies)
+                //{
+                //    if (Globals._cookieString == "")
+                //    {
+                //        Globals._cookieString = c.ToString();
+                //    }
+                //    else
+                //    {
+                //        Globals._cookieString += c.ToString();
+                //    }
+                //}
+            }
+        }
 
         public class ExtWebInterface
         {
@@ -750,61 +747,68 @@ namespace BottomNavigationViewPager.Fragments
 
             public static CookieContainer _cookieCon = new CookieContainer();
 
+            //public async void GetNotificationText(string url)
+            //{
+            //    //var _cmhc = _cookieMan.HasCookies;
+            //    await Task.Run(() =>
+            //    {
+            //        _notificationHttpRequestInProgress = true;
 
-            public async void GetNotificationText(string url)
-            {
-                //var _cmhc = _cookieMan.HasCookies;
-                await Task.Run(() =>
-                {
+            //        try
+            //        {
+            //            var _ctxxx = Android.App.Application.Context;
 
-                    _notificationHttpRequestInProgress = true;
+            //            //URL _url2 = new URL("https://bitchute.com/notifications/");
+            //            //HttpURLConnection conn = (HttpURLConnection)_url2.OpenConnection();
 
-                    try
-                    {
-                        var _ctxxx = Android.App.Application.Context;
+            //            Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
 
-                        //URL _url2 = new URL("https://bitchute.com/notifications/");
-                        //HttpURLConnection conn = (HttpURLConnection)_url2.OpenConnection();
+            //            //conn.ReadTimeout = 10000 /* milliseconds */;
+            //            //conn.ConnectTimeout = 15000 /* milliseconds */;
+            //            //conn.SetRequestProperty("Cookie", cookies);
+            //            //conn.Connect();
 
-                        
+            //            var _tempCookie = Globals._cookieString;
 
-                        //conn.ReadTimeout = 10000 /* milliseconds */;
-                        //conn.ConnectTimeout = 15000 /* milliseconds */;
-                        //conn.SetRequestProperty("Cookie", cookies);
-                        //conn.Connect();
+            //            _cookieCon.SetCookies(_notificationURI, _tempCookie);
 
-                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            //            HttpClient client = new HttpClient(new HttpClientHandler() { CookieContainer = _cookieCon });
 
-                        Uri uri = new Uri(url);
+            //            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
-                        var _req = request;
-                        var _uriii = uri;
-                        var _cookiesss = _fm5._cookieString;
+            //            Uri uri = new Uri(url);
 
-                        _cookieCon.SetCookies(uri, _cookiesss);
+            //            var _req = request;
 
-                        request.CookieContainer = _cookieCon;
-                        //request.CookieContainer.SetCookies(uri, _cookiesss);
+            //            var _uriii = uri;
 
-                        request.AutomaticDecompression = DecompressionMethods.GZip;
+            //            var _cookiesss = Globals._cookieString;
 
-                        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                        using (Stream stream = response.GetResponseStream())
-                        using (StreamReader reader = new StreamReader(stream))
-                        {
-                            _notificationRawText = reader.ReadToEnd();
-                            Console.WriteLine(_notificationRawText);
-                            _rawNoteText = _notificationRawText;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                    _notificationHttpRequestInProgress = false;
-                });
-                
-            }
+            //            _cookieCon.SetCookies(uri, Globals._cookieString);
+
+            //            request.CookieContainer = _cookieCon;
+            //            //request.CookieContainer.SetCookies(uri, _cookiesss);
+
+            //            request.AutomaticDecompression = DecompressionMethods.GZip;
+
+            //            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+
+            //            using (Stream stream = response.GetResponseStream())
+
+            //            using (StreamReader reader = new StreamReader(stream))
+            //            {
+            //                _notificationRawText = reader.ReadToEnd();
+            //                Console.WriteLine(_notificationRawText);
+            //                _rawNoteText = _notificationRawText;
+            //            }
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            Console.WriteLine(ex.Message);
+            //        }
+            //        _notificationHttpRequestInProgress = false;
+            //    });
+            //}
         }
     }
 }

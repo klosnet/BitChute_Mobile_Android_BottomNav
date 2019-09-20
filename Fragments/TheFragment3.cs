@@ -23,6 +23,8 @@ namespace BottomNavigationViewPager.Fragments
 
         bool tabLoaded = false;
 
+        public static string _url = "https://bitchute.com";
+
         public static TheFragment3 NewInstance(string title, string icon)
         {
             var fragment = new TheFragment3();
@@ -60,7 +62,7 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.Settings.DisplayZoomControls = false;
 
-                _wv.LoadUrl(@"https://www.bitchute.com/");
+                _wv.LoadUrl(_url);
 
                 _wv.Settings.JavaScriptEnabled = true;
 
@@ -106,7 +108,7 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
 
-                //_wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
 
                 //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
             }
@@ -164,7 +166,7 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        public static bool _showMoreTimeout = false;
+        //public static bool _showMoreTimeout = false;
 
         //public void ShowMore()
         //{

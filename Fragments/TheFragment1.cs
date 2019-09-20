@@ -21,6 +21,8 @@ namespace BottomNavigationViewPager.Fragments
         protected static WebView _wv;
         protected static View _view;
 
+        public string _url = "https://bitchute.com/";
+
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         bool tabLoaded = false;
@@ -71,7 +73,7 @@ namespace BottomNavigationViewPager.Fragments
                 //every other tab
                // _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
-                _wv.LoadUrl(@"https://www.bitchute.com/");
+                _wv.LoadUrl(_url);
 
                 tabLoaded = true;
             }
