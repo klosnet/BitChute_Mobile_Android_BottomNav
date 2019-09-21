@@ -66,9 +66,9 @@ namespace BottomNavigationViewPager.Fragments
         public static Android.App.PendingIntentFlags _flags = new Android.App.PendingIntentFlags();
         public static int _count = 0;
         //public ExtNotifications _extNotifications = new ExtNotifications();
-        public static ExtWebInterface _extWebInterface = new ExtWebInterface();
+        //public static ExtWebInterface _extWebInterface = new ExtWebInterface();
         public static WebView _notificationWebView;
-        public static TextView _notificationTextView;
+        public static TextView _versionTextView;
         public static bool _notificationHttpRequestInProgress = false;
 
         public static List<string> _tabOverrideStringList = new List<string>();
@@ -153,7 +153,7 @@ namespace BottomNavigationViewPager.Fragments
                 _tab4OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab4OverrideSpinner);
                 _tab5OverrideSpinner = _view.FindViewById<Spinner>(Resource.Id.tab5OverrideSpinner);
                 _notificationTestButton = _view.FindViewById<Button>(Resource.Id._notificationTestButton);
-                _notificationTextView = _view.FindViewById<TextView>(Resource.Id.httpRequestTextView);
+                _versionTextView = _view.FindViewById<TextView>(Resource.Id.versionTextView);
                 _notificationWebView = _view.FindViewById<WebView>(Resource.Id._notificationWebView);
 
                 _zcoffrb.CheckedChange += ExtSettingChanged;
@@ -174,6 +174,8 @@ namespace BottomNavigationViewPager.Fragments
                         Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
 
                 _tab5OverrideSpinner.Adapter = _tab5SpinOverrideAdapter;
+
+                _versionTextView.Text = Globals._appVersion;
 
                 tabLoaded = true;
             }
@@ -404,11 +406,11 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wvRling = true;
 
-                await Task.Delay(500);
+                await Task.Delay(800);
 
                 _wvRl = true;
 
-                await Task.Delay(2666);
+                await Task.Delay(1666);
 
                 mysteryInt = 0;
 
@@ -447,7 +449,7 @@ namespace BottomNavigationViewPager.Fragments
 
             _fm5.GetPendingIntent();
 
-            int _zero = 0;
+            //int _zero = 0;
 
             // Create the PendingIntent with the back stack:
             var resultPendingIntent = stackBuilder.GetPendingIntent(0, (int)Android.App.PendingIntentFlags.UpdateCurrent);
@@ -543,7 +545,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _tab4OverridePreference = _tab4OverrideSpinner.SelectedItem.ToString();
                 _main.TabDetailChanger(3, _tab4OverrideSpinner.SelectedItem.ToString());
-                Globals._t4Is = _tab4OverrideSpinner.SelectedItemId.ToString();
+                //Globals._t4Is = _tab4OverrideSpinner.SelectedItemId.ToString();
             }
         }
 
@@ -557,7 +559,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _tab5OverridePreference = _tab5OverrideSpinner.SelectedItem.ToString();
                 _main.TabDetailChanger(4, _tab5OverrideSpinner.SelectedItem.ToString());
-                Globals._t5Is = _tab5OverrideSpinner.SelectedItemId.ToString();
+                //Globals._t5Is = _tab5OverrideSpinner.SelectedItemId.ToString();
             }
         }
         public static Android.Content.ISharedPreferences _prefs;
@@ -658,12 +660,24 @@ namespace BottomNavigationViewPager.Fragments
         
         public string _cookieString { get; set; }
 
+        /// <summary>
+        /// we have to set this with a delay or it won't fix the link overflow
+        /// </summary>
+        public static async void HideLinkOverflow()
+        {
+            await Task.Delay(2000);
+
+            _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+        }
+        
         private class ExtWebViewClient : WebViewClient
         {
             TheFragment5 _fm5 = new TheFragment5();
 
             public override void OnPageFinished(WebView view, string url)
             {
+                HideLinkOverflow();
+
                 if (_settingsTabOverride)
                 {
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
@@ -718,34 +732,34 @@ namespace BottomNavigationViewPager.Fragments
                 //    }
                 //}
             }
-        }
+        
 
-        public class ExtWebInterface
-        {
-            public static string _notificationRawText;
+        //public class ExtWebInterface
+        //{
+        //    public static string _notificationRawText;
 
-            //public static System.Net.Http.HttpClient _client = new System.Net.Http.HttpClient(new HttpClientHandler() { CookieContainer = _cookieContainer });
+        //    //public static System.Net.Http.HttpClient _client = new System.Net.Http.HttpClient(new HttpClientHandler() { CookieContainer = _cookieContainer });
             
-            public ExtWebInterface()
-            {
-                var _client = new HttpClient();
-            }
+        //    public ExtWebInterface()
+        //    {
+        //        var _client = new HttpClient();
+        //    }
 
-            public ExtWebInterface(HttpClient httpClient)
-            {
-                var _client = httpClient;
-            }
+        //    public ExtWebInterface(HttpClient httpClient)
+        //    {
+        //        var _client = httpClient;
+        //    }
             
-            public async void HttpCookiedRequest(string url)
-            {
-                HttpWebRequest _httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+        //    public async void HttpCookiedRequest(string url)
+        //    {
+        //        HttpWebRequest _httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
 
-                Uri uri = new Uri(url);
+        //        Uri uri = new Uri(url);
 
-                _httpWebRequest.CookieContainer.SetCookies(uri, Globals._cookieString);
-            }
+        //        _httpWebRequest.CookieContainer.SetCookies(uri, Globals._cookieString);
+        //    }
 
-            public static CookieContainer _cookieCon = new CookieContainer();
+        //    public static CookieContainer _cookieCon = new CookieContainer();
 
             //public async void GetNotificationText(string url)
             //{

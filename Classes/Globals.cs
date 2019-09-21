@@ -5,6 +5,8 @@ namespace BottomNavigationViewPager.Classes
 {
     public class Globals
     {
+        public static string _appVersion = "10.6.NotificationAdder.nonGPS";
+
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
         
@@ -47,7 +49,7 @@ namespace BottomNavigationViewPager.Classes
         /// an entry for this app running in foreground: 
         /// importance is present in package.name with OS focus
         /// 
-        /// requires a modified android manifest for get_task ALLOWED
+        /// requires a modified an  droid manifest for get_task ALLOWED
         /// </summary>
         /// <returns>bool</returns>
         public bool IsInBkGrd()

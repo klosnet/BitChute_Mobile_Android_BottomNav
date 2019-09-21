@@ -116,7 +116,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wvRling = true;
 
-                await Task.Delay(500);
+                await Task.Delay(800);
 
                 _wvRl = true;
 
@@ -165,11 +165,23 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        /// <summary>
+        /// we have to set this with a delay or it won't fix the link overflow
+        /// </summary>
+        public static async void HideLinkOverflow()
+        {
+            await Task.Delay(2000);
+
+            _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+        }
+
 
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
             {
+                HideLinkOverflow();
+
                 base.OnPageFinished(view, url);
                 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);

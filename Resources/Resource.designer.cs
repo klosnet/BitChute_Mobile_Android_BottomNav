@@ -2639,9 +2639,6 @@ namespace BottomNavigationViewPager
 			// aapt resource value: 0x7f080021
 			public const int homeAsUp = 2131230753;
 			
-			// aapt resource value: 0x7f0800d5
-			public const int httpRequestTextView = 2131230933;
-			
 			// aapt resource value: 0x7f080062
 			public const int icon = 2131230818;
 			
@@ -2992,6 +2989,9 @@ namespace BottomNavigationViewPager
 			
 			// aapt resource value: 0x7f080026
 			public const int useLogo = 2131230758;
+			
+			// aapt resource value: 0x7f0800d5
+			public const int versionTextView = 2131230933;
 			
 			// aapt resource value: 0x7f080016
 			public const int view_offset_helper = 2131230742;

@@ -86,8 +86,6 @@ namespace BottomNavigationViewPager.Fragments
 
         public void OnSettingsChanged(List<object> settings)
         {
-            var _check = Convert.ToBoolean(settings[0]);
-            var _cc = _check;
             _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
 
             if (Convert.ToBoolean(settings[3]))
@@ -195,7 +193,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wvRling = true;
 
-                await Task.Delay(500);
+                await Task.Delay(800);
 
                 _wvRl = true;
 
@@ -206,10 +204,22 @@ namespace BottomNavigationViewPager.Fragments
         //I'll explain this later
         static int _autoInt = 0;
 
+        /// <summary>
+        /// we have to set this with a delay or it won't fix the link overflow
+        /// </summary>
+        public static async void HideLinkOverflow()
+        {
+            await Task.Delay(2000);
+
+            _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+        }
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView _view, string url)
             {
+                HideLinkOverflow();
+
                 if (!TheFragment5._tab1FeaturedOn)
                 {
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);

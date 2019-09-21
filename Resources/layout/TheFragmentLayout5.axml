@@ -219,7 +219,7 @@
 				android:id="@+id/_notificationWebView" />
 			<TextView
 				android:text="Text"
-				android:id="@+id/httpRequestTextView"
+				android:id="@+id/versionTextView"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content" />
 		</LinearLayout>
