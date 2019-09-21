@@ -42,45 +42,46 @@ namespace BottomNavigationViewPager.Classes
         /// </summary>
         public static bool _bkgrd = true;
 
-        /// <summary>
-        /// returns false when the ActivityManager contains
-        /// an entry for this app running in foreground: 
-        /// importance is present in package.name with OS focus
-        /// 
-        /// requires a modified android manifest for get_task ALLOWED
-        /// </summary>
-        /// <returns>bool</returns>
-        public bool IsInBkGrd()
-        {
-            var _ctx = Android.App.Application.Context;
+        ///// <summary>
+        ///// returns false when the ActivityManager contains
+        ///// an entry for this app running in foreground: 
+        ///// importance is present in package.name with OS focus
+        ///// 
+        ///// requires a modified android manifest for get_task ALLOWED
+        ///// </summary>
+        ///// <returns>bool</returns>
+        //public bool IsInBkGrd()
+        //{
+        //    var _ctx = Android.App.Application.Context;
 
-            var runningAppProcesses = _am.RunningAppProcesses;
+        //    var runningAppProcesses = _am.RunningAppProcesses;
 
-            List<Android.App.ActivityManager.RunningAppProcessInfo> list
-                = new List<Android.App.ActivityManager.RunningAppProcessInfo>();
+        //    List<Android.App.ActivityManager.RunningAppProcessInfo> list
+        //        = new List<Android.App.ActivityManager.RunningAppProcessInfo>();
 
-            list.AddRange(_am.RunningAppProcesses);
+        //    list.AddRange(_am.RunningAppProcesses);
 
-            foreach (var _process in list)
-            {
-                if (_process.Importance == Android.App.ActivityManager.RunningAppProcessInfo.ImportanceForeground)
-                {
-                    foreach (var _pkg in _process.PkgList)
-                    {
-                        if (_pkg == _ctx.PackageName)
-                        {
-                            _bkgrd = false;
-                        }
+        //    foreach (var _process in list)
+        //    {
+        //        if (_process.Importance == Android.App.ActivityManager.RunningAppProcessInfo.ImportanceForeground)
+        //        //if (_process.Importance == Android.App.ActivityManager.RunningAppProcessInfo.ImportanceForeground)
+        //        {
+        //            foreach (var _pkg in _process.PkgList)
+        //            {
+        //                if (_pkg == _ctx.PackageName)
+        //                {
+        //                    _bkgrd = false;
+        //                }
 
-                        else
-                        {
-                            _bkgrd = true;
-                        }
-                    }
-                }
-            }
-            return _bkgrd;
-        }
+        //                else
+        //                {
+        //                    _bkgrd = true;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return _bkgrd;
+        //}
 
 
         /// <summary>

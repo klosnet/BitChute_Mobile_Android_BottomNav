@@ -64,18 +64,18 @@ namespace BottomNavigationViewPager.Fragments
 
         public static Button _notificationTestButton;
         public static Android.App.PendingIntentFlags _flags = new Android.App.PendingIntentFlags();
-        public static int _count = 0;
+        public static int _count = 1;
         //public ExtNotifications _extNotifications = new ExtNotifications();
         public static ExtWebInterface _extWebInterface = new ExtWebInterface();
         public static WebView _notificationWebView;
         public static TextView _notificationTextView;
-        public static bool _notificationHttpRequestInProgress = false;
+        //public static bool _notificationHttpRequestInProgress = false;
 
         public static List<string> _tabOverrideStringList = new List<string>();
         ArrayAdapter<string> _tab4SpinOverrideAdapter;
         ArrayAdapter<string> _tab5SpinOverrideAdapter;
 
-        public static CookieCollection cookies = new CookieCollection();
+        //public static CookieCollection cookies = new CookieCollection();
 
         public static TheFragment5 _fm5;
 

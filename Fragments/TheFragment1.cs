@@ -86,8 +86,6 @@ namespace BottomNavigationViewPager.Fragments
 
         public void OnSettingsChanged(List<object> settings)
         {
-            var _check = Convert.ToBoolean(settings[0]);
-            var _cc = _check;
             _wv.Settings.SetSupportZoom(Convert.ToBoolean(settings[0]));
 
             if (Convert.ToBoolean(settings[3]))
@@ -195,7 +193,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wvRling = true;
 
-                await Task.Delay(500);
+                await Task.Delay(800);
 
                 _wvRl = true;
 
@@ -214,7 +212,9 @@ namespace BottomNavigationViewPager.Fragments
                 {
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
                 }
-                
+
+                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
@@ -222,8 +222,7 @@ namespace BottomNavigationViewPager.Fragments
                 base.OnPageFinished(_view, url);
                 //string _jsHideBannerC = "javascript:(function() { " +
                 //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
-
-
+                
                 //add one to the autoint... for some reason if Tab1 has 
                 //_wv.Settings.MediaPlaybackRequiresUserGesture = false; set then it won't work on the other tabs
                 //this is a workaround for that glitch
@@ -235,7 +234,7 @@ namespace BottomNavigationViewPager.Fragments
                 {
                     _wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 }
-                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+
 
                 SetReload();
             }
