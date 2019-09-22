@@ -1,4 +1,5 @@
-﻿using Android.Content;
+﻿using Android.App;
+using Android.Content;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V4.App;
@@ -19,7 +20,7 @@ using static BottomNavigationViewPager.Classes.ExtNotifications;
 
 namespace BottomNavigationViewPager.Fragments
 {
-    public class TheFragment5 : Fragment
+    public class TheFragment5 : Android.Support.V4.App.Fragment
     {
         string _title;
         string _icon;
@@ -77,6 +78,7 @@ namespace BottomNavigationViewPager.Fragments
         ArrayAdapter<string> _tab5SpinOverrideAdapter;
 
         public static CookieCollection cookies = new CookieCollection();
+        public static PendingIntent _intent;
 
         public static TheFragment5 _fm5;
 
@@ -194,6 +196,11 @@ namespace BottomNavigationViewPager.Fragments
             //_notificationWebView.LoadUrl("https://www.bitchute.com/notifications/");
 
             return _view;
+        }
+
+        public void CustomLoadUrl(string url)
+        {
+            _wv.LoadUrl(url);
         }
 
         public void OnSettingsChanged(List<object> settings)
@@ -683,7 +690,7 @@ namespace BottomNavigationViewPager.Fragments
                 resultIntent.PutExtras(valuesForActivity);
 
                 // Construct a back stack for cross-task navigation:
-                var stackBuilder = TaskStackBuilder.Create(_ctx);
+                var stackBuilder = Android.Support.V4.App.TaskStackBuilder.Create(_ctx);
                 //stackBuilder.AddParentStack(Class.FromType(typeof(MainActivity)));
                 stackBuilder.AddNextIntent(resultIntent);
 
@@ -758,13 +765,11 @@ namespace BottomNavigationViewPager.Fragments
                     {
                         Console.WriteLine(ex.Message);
                     }
-
-
+                    
                     ExtNotifications _notifications = new ExtNotifications();
                     _notifications.DecodeHtmlNotifications(_htmlCode);
                     //Notifications._notificationList
                     
-
                     _notificationHttpRequestInProgress = false;
                 });
             }

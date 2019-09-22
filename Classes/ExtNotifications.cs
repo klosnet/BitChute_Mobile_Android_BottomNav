@@ -48,8 +48,7 @@ namespace BottomNavigationViewPager.Classes
 
                     _notificationTypes.Add(_viewer);
                 }
-
-
+                 
                 foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-target']"))
                 {
                     var _tagContents = node.InnerText;
