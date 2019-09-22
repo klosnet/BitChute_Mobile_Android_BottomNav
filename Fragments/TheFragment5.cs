@@ -67,9 +67,9 @@ namespace BottomNavigationViewPager.Fragments
         public static int _count = 0;
         //public ExtNotifications _extNotifications = new ExtNotifications();
         public static TheFragment5.ExtWebInterface _extWebInterface = new ExtWebInterface();
-        public static WebView _notificationWebView;
         public static TextView _versionTextView;
         public static bool _notificationHttpRequestInProgress = false;
+        public static List<string> _notificationList = new List<string>();
 
         public static List<string> _tabOverrideStringList = new List<string>();
         ArrayAdapter<string> _tab4SpinOverrideAdapter;
@@ -163,7 +163,7 @@ namespace BottomNavigationViewPager.Fragments
                 _stoverrideonrb.CheckedChange += OnTab5OverrideChanged;
                 _tab4OverrideSpinner.ItemSelected += OnTab4OverrideSelectionChanged;
                 _tab5OverrideSpinner.ItemSelected += OnTab5OverrideSelectionChanged;
-                _notificationTestButton.Click += ExtNotificationEvents;
+                //_notificationTestButton.Click += ExtNotificationEvents;
 
                 _tab4SpinOverrideAdapter = new ArrayAdapter<string>(_ctx,
                         Android.Resource.Layout.SimpleListItem1, _tabOverrideStringList);
@@ -426,47 +426,55 @@ namespace BottomNavigationViewPager.Fragments
             list.Add(update);
         }
 
-        public void ExtNotificationEvents(object sender, EventArgs eventArgs)
+        public async void SendNotifications(List<string> notes)
         {
-            var _ctx = Android.App.Application.Context;
+            await Task.Run(() =>
+            {
+                var _ctx = Android.App.Application.Context;
 
-            // Pass the current button press count value to the next activity:
-            var valuesForActivity = new Bundle();
-            valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
 
-            // When the user clicks the notification, SecondActivity will start up.
-            var resultIntent = new Intent(_ctx, typeof(TheFragment1));
+                _count = 1;
+                // Pass the current button press count value to the next activity:
+                var valuesForActivity = new Bundle();
+                valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
 
-            // Pass some values to SecondActivity:
-            resultIntent.PutExtras(valuesForActivity);
+                // When the user clicks the notification, SecondActivity will start up.
+                var resultIntent = new Intent(_ctx, typeof(TheFragment1));
 
-            // Construct a back stack for cross-task navigation:
-            var stackBuilder = TaskStackBuilder.Create(_ctx);
-            //stackBuilder.AddParentStack(Class.FromType(typeof(MainActivity)));
-            stackBuilder.AddNextIntent(resultIntent);
+                // Pass some values to SecondActivity:
+                resultIntent.PutExtras(valuesForActivity);
 
-            _fm5.GetPendingIntent();
+                // Construct a back stack for cross-task navigation:
+                var stackBuilder = TaskStackBuilder.Create(_ctx);
+                //stackBuilder.AddParentStack(Class.FromType(typeof(MainActivity)));
+                stackBuilder.AddNextIntent(resultIntent);
 
-            //int _zero = 0;
+                _fm5.GetPendingIntent();
 
-            // Create the PendingIntent with the back stack:
-            var resultPendingIntent = stackBuilder.GetPendingIntent(0, (int)Android.App.PendingIntentFlags.UpdateCurrent);
+                //int _zero = 0;
 
-            // Build the notification:
-            var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
-                          .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
-                          .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
-                          .SetContentTitle("Button Clicked") // Set the title
-                          .SetNumber(_count) // Display the count in the Content Info
-                          .SetSmallIcon(Resource.Drawable.bitchute_notification2) // This is the icon to display
-                          .SetContentText($"The button has been clicked {_count} times."); // the message to display.
+                // Create the PendingIntent with the back stack:
+                var resultPendingIntent = stackBuilder.GetPendingIntent(0, (int)Android.App.PendingIntentFlags.UpdateCurrent);
 
-            // Finally, publish the notification:
-            var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
-            notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
+                foreach (var note in notes)
+                {
+                    // Build the notification:
+                    var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
+                                  .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                                  .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
+                                  .SetContentTitle("Notification Type") // Set the title
+                                  .SetNumber(_count) // Display the count in the Content Info
+                                  .SetSmallIcon(Resource.Drawable.bitchute_notification2) // This is the icon to display
+                                  .SetContentText(note);
+                    //.SetContentText($"The button has been clicked {_count} times."); // the message to display.
 
-            // Increment the button press count:
-            _count++;
+                    // Finally, publish the notification:
+                    var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
+                    notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
+
+                    _count++;
+                }
+            });
         }
 
 
@@ -654,17 +662,12 @@ namespace BottomNavigationViewPager.Fragments
         {
             while (_appNotifications)
             {
-
                 if (!_notificationHttpRequestInProgress)
                 {
                     _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
 
-                    await Task.Delay(20000);
-
+                    await Task.Delay(60000);
                 }
-                //IValueCallback iCall;
-                //_notificationWebView.EvaluateJavascript("document.body.innerHTML", iCall);
-                //var _checker2 = _yo;
             }
         }
 
@@ -765,12 +768,8 @@ namespace BottomNavigationViewPager.Fragments
 
                         var _tempCookie = Globals._cookieString;
 
-                        //_cookieCon.SetCookies(_notificationURI, _tempCookie);
-
                         var _cookieHeader = _cookieCon.GetCookieHeader(_notificationURI);
-                        //handler.CookieContainer = _cookieCon;
-                        
-                        //handler.UseCookies = true;
+
                         using (HttpClient _client = new HttpClient(handler))
                         {
                             _client.DefaultRequestHeaders.Add("Cookie", TheFragment5._cookieHeader);
@@ -781,30 +780,6 @@ namespace BottomNavigationViewPager.Fragments
 
                             Console.WriteLine(resultContent);
                         }
-
-                        //HttpClient client = new HttpClient(new HttpClientHandler() { CookieContainer = _cookieCon });
-
-                        //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-
-                        //Uri uri = new Uri(url);
-                        
-                        //_cookieCon.SetCookies(uri, Globals._cookieString);
-
-                        //request.CookieContainer = _cookieCon;
-                        ////request.CookieContainer.SetCookies(uri, _cookiesss);
-
-                        //request.AutomaticDecompression = DecompressionMethods.GZip;
-
-                        //using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-
-                        //using (Stream stream = response.GetResponseStream())
-
-                        //using (StreamReader reader = new StreamReader(stream))
-                        //{
-                        //    _notificationRawText = reader.ReadToEnd();
-                        //    Console.WriteLine(_notificationRawText);
-                        //    _rawNoteText = _notificationRawText;
-                        //}
                     }
                     catch (Exception ex)
                     {
@@ -813,6 +788,8 @@ namespace BottomNavigationViewPager.Fragments
 
                     Notifications _notifications = new Notifications();
                     _notifications.DecodeHtmlNotifications(_htmlCode);
+                    //Notifications._notificationList
+                    _fm5.SendNotifications(Notifications._notificationList);
 
                     _notificationHttpRequestInProgress = false;
                 });
