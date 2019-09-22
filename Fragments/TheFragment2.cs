@@ -143,7 +143,7 @@ namespace BottomNavigationViewPager.Fragments
         /// </summary>
         public static async void HideLinkOverflow()
         {
-            await Task.Delay(2000);
+            await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
 
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
         }

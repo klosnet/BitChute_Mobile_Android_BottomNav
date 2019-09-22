@@ -5,7 +5,7 @@ namespace BottomNavigationViewPager.Classes
 {
     public class Globals
     {
-        public static string _appVersion = "10.6.1.NotificationAdder.nonGPS";
+        public static string _appVersion = "10.6.2.NotificationAdder.nonGPS";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -84,9 +84,20 @@ namespace BottomNavigationViewPager.Classes
             return _bkgrd;
         }
 
+        /// <summary>
+        /// contains global var settings for the app
+        /// </summary>
         public class AppSettings
         {
+            /// <summary>
+            /// the ms delay for setting a pop back to root for each tab
+            /// </summary>
             public static int _tabDelay = 800;
+
+            /// <summary>
+            /// the ms delay for fixing link overflow on mobile
+            /// </summary>
+            public static int _linkOverflowFixDelay = 6000;
         }
 
         /// <summary>

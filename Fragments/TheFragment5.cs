@@ -15,6 +15,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using static BottomNavigationViewPager.Classes.ExtNotifications;
 
 namespace BottomNavigationViewPager.Fragments
 {
@@ -425,87 +426,7 @@ namespace BottomNavigationViewPager.Fragments
             var update = Android.App.PendingIntentFlags.UpdateCurrent;
             list.Add(update);
         }
-
-        public async void SendNotifications(List<string> notes)
-        {
-            await Task.Run(() =>
-            {
-                var _ctx = Android.App.Application.Context;
-
-
-                _count = 1;
-                // Pass the current button press count value to the next activity:
-                var valuesForActivity = new Bundle();
-                valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
-
-                // When the user clicks the notification, SecondActivity will start up.
-                var resultIntent = new Intent(_ctx, typeof(TheFragment1));
-
-                // Pass some values to SecondActivity:
-                resultIntent.PutExtras(valuesForActivity);
-
-                // Construct a back stack for cross-task navigation:
-                var stackBuilder = TaskStackBuilder.Create(_ctx);
-                //stackBuilder.AddParentStack(Class.FromType(typeof(MainActivity)));
-                stackBuilder.AddNextIntent(resultIntent);
-
-                _fm5.GetPendingIntent();
-
-                //int _zero = 0;
-
-                // Create the PendingIntent with the back stack:
-                var resultPendingIntent = stackBuilder.GetPendingIntent(0, (int)Android.App.PendingIntentFlags.UpdateCurrent);
-
-                foreach (var note in notes)
-                {
-                    // Build the notification:
-                    var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
-                                  .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
-                                  .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
-                                  .SetContentTitle("Notification Type") // Set the title
-                                  .SetNumber(_count) // Display the count in the Content Info
-                                  .SetSmallIcon(Resource.Drawable.bitchute_notification2) // This is the icon to display
-                                  .SetContentText(note);
-                    //.SetContentText($"The button has been clicked {_count} times."); // the message to display.
-
-                    // Finally, publish the notification:
-                    var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
-                    notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
-
-                    _count++;
-                }
-            });
-        }
-
-
-        //class Foo : Java.Lang.Object
-        //{
-        //    Context context;
-
-        //    public Foo(Context context)
-        //    {
-        //        this.context = context;
-        //    }
-        //    [JavascriptInterface]
-        //    [Export]
-        //    public void showSource(string html)
-        //    {
-        //        Log.Error("content", html);//here html is the HTML code
-        //        var _h = html;
-        //    }
-        //}
-
-        //private class NotificationWebClient : WebViewClient
-        //{
-        //    public override void OnPageFinished(WebView view, string url)
-        //    {
-        //    //    _notificationWebView.LoadUrl("javascript:window.Foo.showSource("
-        //    //                 + "document.getElementsByTagName('html')[0].innerHTML);");
-        //        base.OnPageFinished(view, url);
-        //    }
-        //}
-
-
+        
         public void OnTab5OverrideChanged(object sender, EventArgs e)
         {
             if (_stoverrideonrb.Checked)
@@ -645,13 +566,14 @@ namespace BottomNavigationViewPager.Fragments
         public static string _rawNoteText = "";
 
         public static string _cookieString { get; set; }
-        
+        internal static ExtNotifications ExtNotifications { get => extNotifications; set => extNotifications = value; }
+
         /// <summary>
         /// we have to set this with a delay or it won't fix the link overflow
         /// </summary>
         public static async void HideLinkOverflow()
         {
-            await Task.Delay(2000);
+            await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
 
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
         }
@@ -740,6 +662,59 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
+        private static ExtNotifications extNotifications = new ExtNotifications();
+
+        public async void SendNotifications()
+        {
+            await Task.Run(() =>
+            {
+                var _ctx = Android.App.Application.Context;
+
+
+                _count = 1;
+                // Pass the current button press count value to the next activity:
+                var valuesForActivity = new Bundle();
+                valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
+
+                // When the user clicks the notification, SecondActivity will start up.
+                var resultIntent = new Intent(_ctx, typeof(TheFragment1));
+
+                // Pass some values to SecondActivity:
+                resultIntent.PutExtras(valuesForActivity);
+
+                // Construct a back stack for cross-task navigation:
+                var stackBuilder = TaskStackBuilder.Create(_ctx);
+                //stackBuilder.AddParentStack(Class.FromType(typeof(MainActivity)));
+                stackBuilder.AddNextIntent(resultIntent);
+
+                _fm5.GetPendingIntent();
+
+                //int _zero = 0;
+
+                // Create the PendingIntent with the back stack:
+                var resultPendingIntent = stackBuilder.GetPendingIntent(0, (int)Android.App.PendingIntentFlags.UpdateCurrent);
+
+                foreach (var note in ExtNotifications._customNoteList)
+                {
+                    // Build the notification:
+                    var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
+                                  .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
+                                  .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
+                                  .SetContentTitle(note._noteType) // Set the title
+                                  .SetNumber(_count) // Display the count in the Content Info
+                                  .SetSmallIcon(Resource.Drawable.bitchute_notification2) // This is the icon to display
+                                  .SetContentText(note._noteText);
+                    //.SetContentText($"The button has been clicked {_count} times."); // the message to display.
+
+                    // Finally, publish the notification:
+                    var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);
+                    notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
+
+                    _count++;
+                }
+            });
+        }
+
         public class ExtWebInterface
         {
             public static string _notificationRawText;
@@ -762,8 +737,6 @@ namespace BottomNavigationViewPager.Fragments
 
                     try
                     {
-                        var _ctxxx = Android.App.Application.Context;
-
                         Uri _notificationURI = new Uri("https://bitchute.com/notifications/");
 
                         var _tempCookie = Globals._cookieString;
@@ -786,10 +759,11 @@ namespace BottomNavigationViewPager.Fragments
                         Console.WriteLine(ex.Message);
                     }
 
-                    Notifications _notifications = new Notifications();
+
+                    ExtNotifications _notifications = new ExtNotifications();
                     _notifications.DecodeHtmlNotifications(_htmlCode);
                     //Notifications._notificationList
-                    _fm5.SendNotifications(Notifications._notificationList);
+                    
 
                     _notificationHttpRequestInProgress = false;
                 });
