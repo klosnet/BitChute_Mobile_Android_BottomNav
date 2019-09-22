@@ -13,7 +13,7 @@ using static Android.Views.View;
 
 namespace BottomNavigationViewPager.Fragments
 {
-    [Android.Runtime.Register("onKeyDown", "(ILandroid/view/KeyEvent;)Z", "GetOnKeyDown_ILandroid_view_KeyEvent_Handler")]
+    //[Android.Runtime.Register("onKeyDown", "(ILandroid/view/KeyEvent;)Z", "GetOnKeyDown_ILandroid_view_KeyEvent_Handler")]
     public class TheFragment3 : Fragment
     {
         string _title;
@@ -87,6 +87,10 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
 
             }
+            else
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsShowCarousel);
+            }
 
             if (TheFragment5._zoomControl)
             {
@@ -158,7 +162,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wvRling = true;
 
-                await Task.Delay(800);
+                await Task.Delay(Globals.AppSettings._tabDelay);
 
                 _wvRl = true;
 
@@ -195,7 +199,6 @@ namespace BottomNavigationViewPager.Fragments
         {
             public override void OnPageFinished(WebView view, string url)
             {
-                HideLinkOverflow();
 
                 base.OnPageFinished(view, url);
 
@@ -220,6 +223,8 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
 
                 SetReload();
+                
+                HideLinkOverflow();
             }
         }
     }

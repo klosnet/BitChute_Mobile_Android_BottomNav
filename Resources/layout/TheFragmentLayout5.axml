@@ -211,12 +211,9 @@
 			<Button
 				android:text="Test Notifications"
 				android:layout_width="match_parent"
+				android:visibility="gone"
 				android:layout_height="wrap_content"
 				android:id="@+id/_notificationTestButton" />
-			<android.webkit.WebView
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:id="@+id/_notificationWebView" />
 			<TextView
 				android:text="Text"
 				android:id="@+id/versionTextView"

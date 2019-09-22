@@ -462,7 +462,7 @@ namespace BottomNavigationViewPager
         {
             _fm5.ShowAppSettingsMenu();
         }
-        
+
         public override void OnWindowFocusChanged(bool hasFocus)
         {
             Globals._bkgrd = true;

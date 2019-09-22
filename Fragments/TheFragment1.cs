@@ -193,7 +193,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wvRling = true;
 
-                await Task.Delay(800);
+                await Task.Delay(Globals.AppSettings._tabDelay);
 
                 _wvRl = true;
 

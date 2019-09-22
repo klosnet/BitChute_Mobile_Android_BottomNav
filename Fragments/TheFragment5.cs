@@ -801,29 +801,29 @@ namespace BottomNavigationViewPager.Fragments
                             Console.WriteLine(resultContent);
                         }
 
-                        HttpClient client = new HttpClient(new HttpClientHandler() { CookieContainer = _cookieCon });
+                        //HttpClient client = new HttpClient(new HttpClientHandler() { CookieContainer = _cookieCon });
 
-                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                        //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
-                        Uri uri = new Uri(url);
+                        //Uri uri = new Uri(url);
                         
-                        _cookieCon.SetCookies(uri, Globals._cookieString);
+                        //_cookieCon.SetCookies(uri, Globals._cookieString);
 
-                        request.CookieContainer = _cookieCon;
-                        //request.CookieContainer.SetCookies(uri, _cookiesss);
+                        //request.CookieContainer = _cookieCon;
+                        ////request.CookieContainer.SetCookies(uri, _cookiesss);
 
-                        request.AutomaticDecompression = DecompressionMethods.GZip;
+                        //request.AutomaticDecompression = DecompressionMethods.GZip;
 
-                        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                        //using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
 
-                        using (Stream stream = response.GetResponseStream())
+                        //using (Stream stream = response.GetResponseStream())
 
-                        using (StreamReader reader = new StreamReader(stream))
-                        {
-                            _notificationRawText = reader.ReadToEnd();
-                            Console.WriteLine(_notificationRawText);
-                            _rawNoteText = _notificationRawText;
-                        }
+                        //using (StreamReader reader = new StreamReader(stream))
+                        //{
+                        //    _notificationRawText = reader.ReadToEnd();
+                        //    Console.WriteLine(_notificationRawText);
+                        //    _rawNoteText = _notificationRawText;
+                        //}
                     }
                     catch (Exception ex)
                     {
