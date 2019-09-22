@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="Adapters\ViewPagerAdapter.cs" />
     <Compile Include="Classes\Globals.cs" />
+    <Compile Include="Classes\Notifications.cs" />
     <Compile Include="Fragments\TheFragment5.cs" />
     <Compile Include="Fragments\TheFragment4.cs" />
     <Compile Include="Fragments\TheFragment3.cs" />
@@ -115,8 +116,8 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher_round.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NSoup.Standard">
-      <Version>2.0.1</Version>
+    <PackageReference Include="HtmlAgilityPack">
+      <Version>1.11.12</Version>
     </PackageReference>
     <PackageReference Include="System.Net.Http">
       <Version>4.3.4</Version>

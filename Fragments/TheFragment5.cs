@@ -15,7 +15,6 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using NSoup;
 
 namespace BottomNavigationViewPager.Fragments
 {
@@ -660,7 +659,7 @@ namespace BottomNavigationViewPager.Fragments
                 {
                     _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
 
-                    await Task.Delay(10000);
+                    await Task.Delay(20000);
 
                 }
                 //IValueCallback iCall;
@@ -740,34 +739,16 @@ namespace BottomNavigationViewPager.Fragments
 
         public class ExtWebInterface
         {
-
             public static string _notificationRawText;
-
-            //public static System.Net.Http.HttpClient _client = new System.Net.Http.HttpClient(new HttpClientHandler() { CookieContainer = _cookieContainer });
-
-            public ExtWebInterface()
-            {
-                var _client = new HttpClient();
-            }
-
-            public ExtWebInterface(HttpClient httpClient)
-            {
-                var _client = httpClient;
-            }
-
-            public async void HttpCookiedRequest(string url)
-            {
-                HttpWebRequest _httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-
-                Uri uri = new Uri(url);
-
-                _httpWebRequest.CookieContainer.SetCookies(uri, Globals._cookieString);
-            }
 
             public static CookieContainer _cookieCon = new CookieContainer();
 
+            public static string _htmlCode = "";
+
             public async void GetNotificationText(string url)
             {
+                _htmlCode = "";
+
                 //var _cmhc = _cookieMan.HasCookies;
                 await Task.Run(() =>
                 {
@@ -796,7 +777,7 @@ namespace BottomNavigationViewPager.Fragments
                             var getRequest = _client.GetAsync("https://bitchute.com/notifications/").Result;
                             var resultContent = getRequest.Content.ReadAsStringAsync().Result;
 
-                            var _checkContent = resultContent;
+                            _htmlCode = resultContent;
 
                             Console.WriteLine(resultContent);
                         }
@@ -829,6 +810,10 @@ namespace BottomNavigationViewPager.Fragments
                     {
                         Console.WriteLine(ex.Message);
                     }
+
+                    Notifications _notifications = new Notifications();
+                    _notifications.DecodeHtmlNotifications(_htmlCode);
+
                     _notificationHttpRequestInProgress = false;
                 });
             }
