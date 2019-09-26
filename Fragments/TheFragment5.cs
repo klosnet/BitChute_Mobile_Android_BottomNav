@@ -198,6 +198,11 @@ namespace BottomNavigationViewPager.Fragments
             return _view;
         }
 
+        public void NotificationTest (string text)
+        {
+            _versionTextView.Text = text;
+        }
+
         public void CustomLoadUrl(string url)
         {
             _wv.LoadUrl(url);
@@ -595,7 +600,7 @@ namespace BottomNavigationViewPager.Fragments
                 {
                     _extWebInterface.GetNotificationText("https://www.bitchute.com/notifications/");
 
-                    await Task.Delay(60000);
+                    await Task.Delay(20000);
                 }
             }
         }
@@ -670,39 +675,59 @@ namespace BottomNavigationViewPager.Fragments
         }
 
         private static ExtNotifications extNotifications = new ExtNotifications();
-
+        
         public async void SendNotifications()
         {
             await Task.Run(() =>
             {
+                //var _ctx = Android.App.Application.Context;
+
+                //var intent = new Intent(_ctx, typeof(MainActivity));
+                //intent.AddFlags(ActivityFlags.ClearTop);
+                //var pendingIntent = PendingIntent.GetActivity(_ctx, 0, intent, PendingIntentFlags.OneShot);
+
+                //NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(_ctx)
+                //    .SetSmallIcon(Resource.Drawable.bitchute_notification2)
+                //    .SetContentTitle("BitChute")
+                //    .SetContentText("test")
+                //    .SetAutoCancel(true)
+                //    .SetContentIntent(pendingIntent);
+
+                //NotificationManagerCompat notificationManager = NotificationManagerCompat.From(_ctx);
+                //notificationManager.Notify(0, notificationBuilder.Build());
+
                 var _ctx = Android.App.Application.Context;
 
-
                 _count = 1;
+
                 // Pass the current button press count value to the next activity:
                 var valuesForActivity = new Bundle();
                 valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
+                //valuesForActivity.PutString(_main._notificationString, "https://bitchute.com/subscriptions/");
 
                 // When the user clicks the notification, SecondActivity will start up.
-                var resultIntent = new Intent(_ctx, typeof(TheFragment1));
+                var resultIntent = new Intent(_ctx, typeof(MainActivity));
+                //resultIntent.AddFlags(ActivityFlags.ClearTop);
+                resultIntent.AddFlags(ActivityFlags.SingleTop);
+                
 
                 // Pass some values to SecondActivity:
                 resultIntent.PutExtras(valuesForActivity);
 
-                // Construct a back stack for cross-task navigation:
-                var stackBuilder = Android.Support.V4.App.TaskStackBuilder.Create(_ctx);
-                //stackBuilder.AddParentStack(Class.FromType(typeof(MainActivity)));
-                stackBuilder.AddNextIntent(resultIntent);
+                //// Construct a back stack for cross-task navigation:
+                //var stackBuilder = Android.Support.V4.App.TaskStackBuilder.Create(_ctx);
+                ////stackBuilder.AddParentStack(Class.FromType(typeof(MainActivity)));
+                //stackBuilder.AddNextIntent(resultIntent);
 
-                _fm5.GetPendingIntent();
-
-                //int _zero = 0;
-
+                var resultPendingIntent = PendingIntent.GetActivity(_ctx, 0, resultIntent, PendingIntentFlags.OneShot);
+                
                 // Create the PendingIntent with the back stack:
-                var resultPendingIntent = stackBuilder.GetPendingIntent(0, (int)Android.App.PendingIntentFlags.UpdateCurrent);
+                //var resultPendingIntent = stackBuilder.GetPendingIntent(0, (int)Android.App.PendingIntentFlags.UpdateCurrent);
 
                 foreach (var note in ExtNotifications._customNoteList)
                 {
+                    valuesForActivity.PutString(_main._notificationString, "https://bitchute.com/subscriptions/");
+
                     // Build the notification:
                     var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
                                   .SetAutoCancel(true) // Dismiss the notification from the notification area when the user clicks on it
@@ -718,9 +743,10 @@ namespace BottomNavigationViewPager.Fragments
                     notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
 
                     _count++;
+
                 }
             });
-        }
+        }                                                                                                                                  
 
         public class ExtWebInterface
         {
@@ -737,7 +763,6 @@ namespace BottomNavigationViewPager.Fragments
                 //var _cmhc = _cookieMan.HasCookies;
                 await Task.Run(() =>
                 {
-
                     HttpClientHandler handler = new HttpClientHandler() { UseCookies = false };
                     
                     _notificationHttpRequestInProgress = true;
@@ -769,7 +794,8 @@ namespace BottomNavigationViewPager.Fragments
                     ExtNotifications _notifications = new ExtNotifications();
                     _notifications.DecodeHtmlNotifications(_htmlCode);
                     //Notifications._notificationList
-                    
+
+                    _fm5.SendNotifications();
                     _notificationHttpRequestInProgress = false;
                 });
             }

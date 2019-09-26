@@ -76,7 +76,7 @@ namespace BottomNavigationViewPager.Classes
                 Console.WriteLine(ex.Message);
             }
 
-            _fm5.SendNotifications();
+            //_fm5.SendNotifications();
             return _customNoteList;
         }
     }

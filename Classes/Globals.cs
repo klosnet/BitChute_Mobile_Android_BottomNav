@@ -63,20 +63,23 @@ namespace BottomNavigationViewPager.Classes
 
             list.AddRange(_am.RunningAppProcesses);
 
-            foreach (var _process in list)
+            if (list != null)
             {
-                if (_process.Importance == Android.App.ActivityManager.RunningAppProcessInfo.ImportanceForeground)
+                foreach (var _process in list)
                 {
-                    foreach (var _pkg in _process.PkgList)
+                    if (_process.Importance == Android.App.ActivityManager.RunningAppProcessInfo.ImportanceForeground)
                     {
-                        if (_pkg == _ctx.PackageName)
+                        foreach (var _pkg in _process.PkgList)
                         {
-                            _bkgrd = false;
-                        }
+                            if (_pkg == _ctx.PackageName)
+                            {
+                                _bkgrd = false;
+                            }
 
-                        else
-                        {
-                            _bkgrd = true;
+                            else
+                            {
+                                _bkgrd = true;
+                            }
                         }
                     }
                 }

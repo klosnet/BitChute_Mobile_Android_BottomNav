@@ -74,7 +74,7 @@ namespace BottomNavigationViewPager
               DataHost = "bitchute.com",
               DataPathPrefix = "",
               AutoVerify = true)]
-    [Android.App.Activity(Label = "BitChute", Theme = "@style/AppTheme", MainLauncher = true,
+    [Android.App.Activity(LaunchMode = Android.Content.PM.LaunchMode.SingleTop, Label = "BitChute", Theme = "@style/AppTheme", MainLauncher = true,
         ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize,
         ParentActivity = typeof(MainActivity))]
 
@@ -93,9 +93,10 @@ namespace BottomNavigationViewPager
         Fragment[] _fragments;
         
         public static MainActivity _main;
+        public static Bundle _bundle;
         
         public static Globals _globals = new Globals();
-        //public static ExtNotifications _notifications = new ExtNotifications();
+        private static ExtNotifications notifications = new ExtNotifications();
         public static bool _navBarHideTimeout = false;
 
         //notification items:
@@ -103,10 +104,30 @@ namespace BottomNavigationViewPager
         public static readonly string CHANNEL_ID = "location_notification";
         public static readonly string COUNT_KEY = "count";
 
+        private string notificationString;
+
+        public class NotificationActivities
+        {
+            public static bool _out;
+
+            public static bool _input
+            {
+                get
+                {
+                    return _out;
+                }
+                set
+                {
+                    _out = value;
+                }
+            }
+
+        }
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             _main = this;
-
+            
             var _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
 
             TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
@@ -140,6 +161,8 @@ namespace BottomNavigationViewPager
             _viewPager.OffscreenPageLimit = 4;
             
             CreateNotificationChannel();
+
+            _bundle = savedInstanceState;
         }
 
         public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
@@ -158,6 +181,22 @@ namespace BottomNavigationViewPager
                 _fm5
             };
         }
+
+        public string _notificationString
+        {
+            get
+            {
+                return this.notificationString;
+            }
+            set
+            {
+                
+                this.notificationString = value;
+                _fm5.NotificationTest(this.notificationString);
+            }
+        }
+
+        internal static ExtNotifications Notifications { get => notifications; set => notifications = value; }
 
         public static bool _navHidden = false;
 
@@ -202,14 +241,6 @@ namespace BottomNavigationViewPager
                     _navTimeout = false;
                     _navHidden = true;
                 }
-            }
-        }
-
-        public async void HideNavBarAfterDelay()
-        {
-            if (!_navBarHideTimeout)
-            {
-                await Task.Delay(500);
             }
         }
 
@@ -296,6 +327,8 @@ namespace BottomNavigationViewPager
                 _navViewItemList[4].SetTitle(TheFragment5._tab5OverridePreference);
                 _navViewItemList[4].SetIcon(_tab5Icon);
             }
+            _notificationString = "test";
+
             CustomOnScroll();
         }
 
@@ -352,7 +385,7 @@ namespace BottomNavigationViewPager
         /// <summary>
         /// method to change any tab icon, title
         /// it takes the tab number integer and string change details
-        /// string can be null for now can be null or blank, use "home" "feed" "subs" or "explore" with int s 3 & 4
+        /// string can be null for now can be null or blank, use "Home" "Feed" "Subs" or "Explore" with int s 3 & 4
         /// int representing tab 0 is farthest left going up to the right
         /// </summary>
         /// <param name="changeDetails"></param>
@@ -484,7 +517,7 @@ namespace BottomNavigationViewPager
                 // channel on older versions of Android.
                 return;
             }
-
+            
             var name = "BitChute";
             var description = "BitChute for Android";
             var channel = new Android.App.NotificationChannel(CHANNEL_ID, name, Android.App.NotificationImportance.Default)
@@ -502,10 +535,20 @@ namespace BottomNavigationViewPager
         {
             while (_notifying)
             {
-                await Task.Delay(20000);
+                await Task.Delay(120000);
 
-               // _notifications.ExtNotificatonEvents();
+               
             }
+        }
+
+        protected override void OnNewIntent(Intent intent)
+        {
+            if (intent.HasExtra("SomeSpecialKey"))
+            {
+                intent.GetStringExtra("SomeSpecialKey");
+            }
+
+            base.OnNewIntent(intent);
         }
 
         protected override void OnDestroy()
