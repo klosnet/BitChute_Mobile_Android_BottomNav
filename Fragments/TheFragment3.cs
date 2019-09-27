@@ -194,7 +194,13 @@ namespace BottomNavigationViewPager.Fragments
 
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
         }
-        
+
+
+        public void LoadCustomUrl(string url)
+        {
+            _wv.LoadUrl(url);
+        }
+
         public class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)

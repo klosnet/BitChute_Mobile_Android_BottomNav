@@ -692,14 +692,14 @@ namespace BottomNavigationViewPager.Fragments
                 var resultIntent = new Intent(_ctx, typeof(MainActivity));
 
 
-                int _countDracula = 0;
+                int _noteCount = 0;
 
                 MainActivity._NotificationURLList.Clear();
 
                 foreach (var note in ExtNotifications._customNoteList)
                 {
                     MainActivity._NotificationURLList.Add(note._noteLink);
-                    valuesForActivity.PutInt("Count", _countDracula);
+                    valuesForActivity.PutInt("Count", _noteCount);
                     resultIntent.PutExtras(valuesForActivity);
 
                     var resultPendingIntent = PendingIntent.GetActivity(_ctx, 0, resultIntent, PendingIntentFlags.UpdateCurrent);
@@ -720,7 +720,7 @@ namespace BottomNavigationViewPager.Fragments
                     notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
 
                     _count++;
-                    _countDracula++;
+                    _noteCount++;
                     if (_count >= 300)
                     {
                         _count = 0;
@@ -728,7 +728,12 @@ namespace BottomNavigationViewPager.Fragments
                     }
                 }
             });
-        }                                                                                                                                  
+        }
+
+        public void LoadCustomUrl(string url)
+        {
+            _wv.LoadUrl(url);
+        }
 
         public class ExtWebInterface
         {

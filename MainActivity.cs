@@ -545,7 +545,25 @@ namespace BottomNavigationViewPager
             base.OnNewIntent(intent);
 
             var index = MainActivity._NotificationURLList.Count;
-
+            
+            switch (_viewPager.CurrentItem)
+            {
+                case 0:
+                    _fm1.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
+                    break;
+                case 1:
+                    _fm2.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
+                    break;
+                case 2:
+                    _fm3.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
+                    break;
+                case 3:
+                    _fm4.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
+                    break;
+                case 4:
+                    _fm5.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
+                    break;
+            }
             _fm1.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
         }
 
