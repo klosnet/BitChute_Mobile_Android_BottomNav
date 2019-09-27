@@ -124,6 +124,8 @@ namespace BottomNavigationViewPager
 
         }
 
+        public static List<string> _NotificationURLList = new List<string>();
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             _main = this;
@@ -538,16 +540,13 @@ namespace BottomNavigationViewPager
                 await Task.Delay(120000);
             }
         }
-
         protected override void OnNewIntent(Intent intent)
         {
             base.OnNewIntent(intent);
-            var notificationExists = intent.Extras.ContainsKey("NotificationURL");
-            var notExist = intent.Extras.ContainsKey("fuckmylife");
-            
-            var WTF2 = intent.Extras.GetString("NotificationURL");
-            var vvvv = intent.Extras.GetInt("Count");
-            var yo = 0;
+
+            var index = MainActivity._NotificationURLList.Count;
+
+            _fm1.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
         }
 
         protected override void OnDestroy()

@@ -694,15 +694,15 @@ namespace BottomNavigationViewPager.Fragments
 
                 int _countDracula = 0;
 
+                MainActivity._NotificationURLList.Clear();
+
                 foreach (var note in ExtNotifications._customNoteList)
                 {
-
-                    valuesForActivity.PutString("NotificationURL", "https://bitchute.com/notifications/");
+                    MainActivity._NotificationURLList.Add(note._noteLink);
                     valuesForActivity.PutInt("Count", _countDracula);
                     resultIntent.PutExtras(valuesForActivity);
 
                     var resultPendingIntent = PendingIntent.GetActivity(_ctx, 0, resultIntent, PendingIntentFlags.UpdateCurrent);
-
 
                     resultIntent.AddFlags(ActivityFlags.SingleTop);
 
@@ -714,7 +714,6 @@ namespace BottomNavigationViewPager.Fragments
                                   .SetNumber(_count) // Display the count in the Content Info
                                   .SetSmallIcon(Resource.Drawable.bitchute_notification2) // This is the icon to display
                                   .SetContentText(note._noteText);
-                    //.SetContentText($"The button has been clicked {_count} times."); // the message to display.
 
                     // Finally, publish the notification:
                     var notificationManager = Android.Support.V4.App.NotificationManagerCompat.From(_ctx);

@@ -67,7 +67,6 @@ namespace BottomNavigationViewPager.Classes
 
                 foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//a[@class='notification-view']"))
                 {
-                    //var href = link.Attributes["href"].Value; // "anotherstyle7.css"
                     var _tagContents = node.Attributes["href"].Value.ToString();
 
                     var _viewer = "https://bitchute.com" + _tagContents;
