@@ -22,6 +22,8 @@ namespace BottomNavigationViewPager.Classes
 
         public static List<string> _notificationTypes = new List<string>();
 
+        public static List<string> _notificationLinks = new List<string>();
+
         public static List<string> _previousNotificationList = new List<string>();
 
         public static List<CustomNotification> _customNoteList = new List<CustomNotification>();
@@ -30,6 +32,8 @@ namespace BottomNavigationViewPager.Classes
         {
             public string _noteType { get; set; }
             public string _noteText { get; set; }
+            public string _noteLink { get; set; }
+            public int _noteIndex { get; set; }
         }
 
 
@@ -49,14 +53,28 @@ namespace BottomNavigationViewPager.Classes
                     _notificationTypes.Add(_viewer);
                 }
                  
+
                 foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-target']"))
                 {
                     var _tagContents = node.InnerText;
 
                     var _viewer = _tagContents;
 
+
+
                     _notificationTextList.Add(_viewer);
                 }
+
+                foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//a[@class='notification-view']"))
+                {
+                    //var href = link.Attributes["href"].Value; // "anotherstyle7.css"
+                    var _tagContents = node.Attributes["href"].Value.ToString();
+
+                    var _viewer = "https://bitchute.com" + _tagContents;
+
+                    _notificationLinks.Add(_viewer);
+                }
+
 
                 _customNoteList.Clear();
 
@@ -66,6 +84,7 @@ namespace BottomNavigationViewPager.Classes
                 {
                     var note = new CustomNotification();
                     note._noteType = type.ToString();
+                    note._noteLink = _notificationLinks[currentListIndex].ToString();
                     note._noteText = _notificationTextList[currentListIndex].ToString();
                     _customNoteList.Add(note);
                     currentListIndex++;

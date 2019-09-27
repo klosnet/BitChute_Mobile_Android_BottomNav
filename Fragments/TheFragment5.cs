@@ -680,22 +680,6 @@ namespace BottomNavigationViewPager.Fragments
         {
             await Task.Run(() =>
             {
-                //var _ctx = Android.App.Application.Context;
-
-                //var intent = new Intent(_ctx, typeof(MainActivity));
-                //intent.AddFlags(ActivityFlags.ClearTop);
-                //var pendingIntent = PendingIntent.GetActivity(_ctx, 0, intent, PendingIntentFlags.OneShot);
-
-                //NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(_ctx)
-                //    .SetSmallIcon(Resource.Drawable.bitchute_notification2)
-                //    .SetContentTitle("BitChute")
-                //    .SetContentText("test")
-                //    .SetAutoCancel(true)
-                //    .SetContentIntent(pendingIntent);
-
-                //NotificationManagerCompat notificationManager = NotificationManagerCompat.From(_ctx);
-                //notificationManager.Notify(0, notificationBuilder.Build());
-
                 var _ctx = Android.App.Application.Context;
 
                 _count = 1;
@@ -703,30 +687,24 @@ namespace BottomNavigationViewPager.Fragments
                 // Pass the current button press count value to the next activity:
                 var valuesForActivity = new Bundle();
                 valuesForActivity.PutInt(MainActivity.COUNT_KEY, _count);
-                //valuesForActivity.PutString(_main._notificationString, "https://bitchute.com/subscriptions/");
-
                 // When the user clicks the notification, SecondActivity will start up.
+               
                 var resultIntent = new Intent(_ctx, typeof(MainActivity));
-                //resultIntent.AddFlags(ActivityFlags.ClearTop);
-                resultIntent.AddFlags(ActivityFlags.SingleTop);
-                
 
-                // Pass some values to SecondActivity:
-                resultIntent.PutExtras(valuesForActivity);
 
-                //// Construct a back stack for cross-task navigation:
-                //var stackBuilder = Android.Support.V4.App.TaskStackBuilder.Create(_ctx);
-                ////stackBuilder.AddParentStack(Class.FromType(typeof(MainActivity)));
-                //stackBuilder.AddNextIntent(resultIntent);
-
-                var resultPendingIntent = PendingIntent.GetActivity(_ctx, 0, resultIntent, PendingIntentFlags.OneShot);
-                
-                // Create the PendingIntent with the back stack:
-                //var resultPendingIntent = stackBuilder.GetPendingIntent(0, (int)Android.App.PendingIntentFlags.UpdateCurrent);
+                int _countDracula = 0;
 
                 foreach (var note in ExtNotifications._customNoteList)
                 {
-                    valuesForActivity.PutString(_main._notificationString, "https://bitchute.com/subscriptions/");
+
+                    valuesForActivity.PutString("NotificationURL", "https://bitchute.com/notifications/");
+                    valuesForActivity.PutInt("Count", _countDracula);
+                    resultIntent.PutExtras(valuesForActivity);
+
+                    var resultPendingIntent = PendingIntent.GetActivity(_ctx, 0, resultIntent, PendingIntentFlags.UpdateCurrent);
+
+
+                    resultIntent.AddFlags(ActivityFlags.SingleTop);
 
                     // Build the notification:
                     var builder = new Android.Support.V4.App.NotificationCompat.Builder(_ctx, MainActivity.CHANNEL_ID)
@@ -743,7 +721,12 @@ namespace BottomNavigationViewPager.Fragments
                     notificationManager.Notify(MainActivity.NOTIFICATION_ID, builder.Build());
 
                     _count++;
-
+                    _countDracula++;
+                    if (_count >= 300)
+                    {
+                        _count = 0;
+                        return;
+                    }
                 }
             });
         }                                                                                                                                  

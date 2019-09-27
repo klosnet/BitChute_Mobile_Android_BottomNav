@@ -536,19 +536,18 @@ namespace BottomNavigationViewPager
             while (_notifying)
             {
                 await Task.Delay(120000);
-
-               
             }
         }
 
         protected override void OnNewIntent(Intent intent)
         {
-            if (intent.HasExtra("SomeSpecialKey"))
-            {
-                intent.GetStringExtra("SomeSpecialKey");
-            }
-
             base.OnNewIntent(intent);
+            var notificationExists = intent.Extras.ContainsKey("NotificationURL");
+            var notExist = intent.Extras.ContainsKey("fuckmylife");
+            
+            var WTF2 = intent.Extras.GetString("NotificationURL");
+            var vvvv = intent.Extras.GetInt("Count");
+            var yo = 0;
         }
 
         protected override void OnDestroy()
