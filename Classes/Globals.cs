@@ -5,7 +5,7 @@ namespace BottomNavigationViewPager.Classes
 {
     public class Globals
     {
-        public static string _appVersion = "10.6.4.NotificationAdder.nonGPS";
+        public static string _appVersion = "10.6.4.1.NotificationAdder.nonGPS";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -210,7 +210,30 @@ namespace BottomNavigationViewPager.Classes
                             "document.getElementById('video-like').data-toggle=''; " + "})()" + "\r\n"
                 + "javascript:(function() { " +
                             "document.getElementById('video-dislike').data-toggle=''; " + "})()";
-                
+
+            /// <summary>
+            /// hides the video title
+            /// </summary>
+            public static string _jsHideTitle = "javascript:(function() { " +
+                            "document.getElementById('video-title').style.display='none'; " + "})()";
+
+            /// <summary>
+            /// shows the title bar
+            /// </summary>
+            public static string _jsShowTitle = "javascript:(function() { " +
+                            "document.getElementById('video-title').style.display='block'; " + "})()";
+
+            /// <summary>
+            /// hides the video watch block
+            /// </summary>
+            public static string _jsHideWatchTab = "javascript:(function() { " +
+                            "document.getElementsByClassName('tab-scroll-outer')[0].style.display='none'; " + "})()";
+
+            /// <summary>
+            /// shows the video watch block
+            /// </summary>
+            public static string _jsShowWatchTab = "javascript:(function() { " +
+                            "document.getElementsByClassName('tab-scroll-outer')[0].style.display='block'; " + "})()";
         }
 
         /// <summary>

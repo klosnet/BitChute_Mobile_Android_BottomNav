@@ -62,7 +62,7 @@ using static Android.Views.View;
 using Android.Graphics.Drawables;
 using System.Net;
 using Java.Net;
-
+using Android.Content.Res;
 
 namespace BottomNavigationViewPager
 {
@@ -103,7 +103,7 @@ namespace BottomNavigationViewPager
         public static readonly string CHANNEL_ID = "location_notification";
         public static readonly string COUNT_KEY = "count";
 
-        
+        public static Window _window;
 
         private string notificationString;
 
@@ -114,7 +114,8 @@ namespace BottomNavigationViewPager
         protected override void OnCreate(Bundle savedInstanceState)
         {
             _main = this;
-            
+            _window = this.Window; 
+
             var _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
 
             TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
@@ -503,7 +504,7 @@ namespace BottomNavigationViewPager
         {
             while (Globals.AppSettings._notifying)
             {
-                await Task.Delay(120000);
+                await Task.Delay(240000);
             }
         }
         protected override void OnNewIntent(Intent intent)
@@ -540,6 +541,73 @@ namespace BottomNavigationViewPager
 
             }
             //_fm1.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
+        }
+        
+        WindowManagerFlags _winflagfullscreen = WindowManagerFlags.Fullscreen;
+        
+        WindowManagerFlags _winflagnotfullscreen = WindowManagerFlags.ForceNotFullscreen;
+
+        public override void OnConfigurationChanged(Configuration newConfig)
+        {
+            base.OnConfigurationChanged(newConfig);
+
+            if (newConfig.Orientation == Orientation.Landscape)
+            {
+                switch (_viewPager.CurrentItem)
+                {
+                    case 0:
+                        _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
+                        _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        break;
+                    case 1:
+                        _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
+                        _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        break;
+                    case 2:
+                        _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
+                        _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        break;
+                    case 3:
+                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
+                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        break;
+                    case 4:
+                        _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
+                        _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        break;
+                }
+
+                _window.ClearFlags(_winflagnotfullscreen);
+                _window.AddFlags(_winflagfullscreen);
+            }
+            if (newConfig.Orientation == Orientation.Portrait)
+            {
+                switch (_viewPager.CurrentItem)
+                {
+                    case 0:
+                        _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
+                        _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        break;
+                    case 1:
+                        _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
+                        _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        break;
+                    case 2:
+                        _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
+                        _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        break;
+                    case 3:
+                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
+                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        break;
+                    case 4:
+                        _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
+                        _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        break;
+                }
+                _window.ClearFlags(_winflagfullscreen);
+                _window.AddFlags(_winflagnotfullscreen);
+            }
         }
 
         protected override void OnDestroy()
