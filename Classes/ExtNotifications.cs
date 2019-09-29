@@ -16,7 +16,7 @@ namespace BottomNavigationViewPager.Classes
 {
     class ExtNotifications
     {
-        public static TheFragment5 _fm5 = new TheFragment5();
+        public static TheFragment5 _fm5 = MainActivity._fm5;
 
         public static List<string> _notificationTextList = new List<string>();
 
@@ -27,7 +27,8 @@ namespace BottomNavigationViewPager.Classes
         public static List<string> _previousNotificationList = new List<string>();
 
         public static List<CustomNotification> _customNoteList = new List<CustomNotification>();
-        
+        private int currentListIndex;
+
         public class CustomNotification
         {
             public string _noteType { get; set; }
@@ -37,65 +38,73 @@ namespace BottomNavigationViewPager.Classes
         }
 
 
-        public List<CustomNotification> DecodeHtmlNotifications(string html)
+        public async void DecodeHtmlNotifications(string html)
         {
-            try
+            await System.Threading.Tasks.Task.Run(() =>
             {
-                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-                doc.LoadHtml(html);
-
-                foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-unread']"))
+                try
                 {
-                    var _tagContents = node.InnerText;
+                    HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                    doc.LoadHtml(html);
 
-                    var _viewer = _tagContents;
+                    _notificationTextList.Clear();
+                    _notificationTypes.Clear();
+                    _notificationLinks.Clear();
 
-                    _notificationTypes.Add(_viewer);
+                    foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-target']"))
+                    {
+                        var _tagContents = node.InnerText;
+
+                        _notificationTextList.Add(_tagContents);
+                    }
+
+                    //if (_notificationTextList == _previousNotificationList)
+                    //{
+                    //    
+                    //    return _customNoteList;
+                    //}
+
+                    foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-unread']"))
+                    {
+                        var _tagContents = node.InnerText;
+
+                        _notificationTypes.Add(_tagContents);
+                    }
+
+                    foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//a[@class='notification-view']"))
+                    {
+                        var _tagContents = "https://bitchute.com" + node.Attributes["href"].Value.ToString();
+
+                        _notificationLinks.Add(_tagContents);
+                    }
+                    currentListIndex = 0;
+
+                    _customNoteList.Clear();
+
+                    
+
+                    foreach (var nt in _notificationTextList)
+                    {
+                        var note = new CustomNotification();
+
+                        note._noteType = nt.ToString();
+                        note._noteLink = _notificationLinks[currentListIndex].ToString();
+                        note._noteText = _notificationTextList[currentListIndex].ToString();
+                        note._noteIndex = currentListIndex;
+                        _customNoteList.Add(note);
+                        currentListIndex++;
+                    }
+                    _fm5.SendNotifications();
+                    
                 }
-                 
-
-                foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='notification-target']"))
+                catch (Exception ex)
                 {
-                    var _tagContents = node.InnerText;
-
-                    var _viewer = _tagContents;
-
-
-
-                    _notificationTextList.Add(_viewer);
+                    Console.WriteLine(ex.Message);
                 }
-
-                foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//a[@class='notification-view']"))
-                {
-                    var _tagContents = node.Attributes["href"].Value.ToString();
-
-                    var _viewer = "https://bitchute.com" + _tagContents;
-
-                    _notificationLinks.Add(_viewer);
-                }
-
-
-                _customNoteList.Clear();
-
-                int currentListIndex = 0;
-
-                foreach (var type in _notificationTypes)
-                {
-                    var note = new CustomNotification();
-                    note._noteType = type.ToString();
-                    note._noteLink = _notificationLinks[currentListIndex].ToString();
-                    note._noteText = _notificationTextList[currentListIndex].ToString();
-                    _customNoteList.Add(note);
-                    currentListIndex++;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-
+                TheFragment5._notificationHttpRequestInProgress = false;
+                //_previousNotificationList = _notificationTextList;
+            });
             //_fm5.SendNotifications();
-            return _customNoteList;
         }
     }
 }

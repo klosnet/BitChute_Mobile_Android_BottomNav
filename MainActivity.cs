@@ -63,7 +63,6 @@ using Android.Graphics.Drawables;
 using System.Net;
 using Java.Net;
 
-//app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
 
 namespace BottomNavigationViewPager
 {
@@ -100,29 +99,15 @@ namespace BottomNavigationViewPager
         public static bool _navBarHideTimeout = false;
 
         //notification items:
-        public static readonly int NOTIFICATION_ID = 1000;
+        public static int NOTIFICATION_ID = 1000;
         public static readonly string CHANNEL_ID = "location_notification";
         public static readonly string COUNT_KEY = "count";
 
+        
+
         private string notificationString;
 
-        public class NotificationActivities
-        {
-            public static bool _out;
 
-            public static bool _input
-            {
-                get
-                {
-                    return _out;
-                }
-                set
-                {
-                    _out = value;
-                }
-            }
-
-        }
 
         public static List<string> _NotificationURLList = new List<string>();
 
@@ -137,6 +122,7 @@ namespace BottomNavigationViewPager
             TheFragment5._tab3Hide = _prefs.GetBoolean("tab3hide", true);
             TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
             TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
+            
 
             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
@@ -183,20 +169,7 @@ namespace BottomNavigationViewPager
                 _fm5
             };
         }
-
-        public string _notificationString
-        {
-            get
-            {
-                return this.notificationString;
-            }
-            set
-            {
-                
-                this.notificationString = value;
-                _fm5.NotificationTest(this.notificationString);
-            }
-        }
+        
 
         internal static ExtNotifications Notifications { get => notifications; set => notifications = value; }
 
@@ -230,10 +203,6 @@ namespace BottomNavigationViewPager
         {
             while (!_navHidden)
             {
-                //canceling this for now
-                //await Task.Run(() => System.Threading.Thread.Sleep(1000));
-
-                //lets see if this is faster
                 await Task.Delay(1000);
 
                 _navTimer++;
@@ -329,7 +298,6 @@ namespace BottomNavigationViewPager
                 _navViewItemList[4].SetTitle(TheFragment5._tab5OverridePreference);
                 _navViewItemList[4].SetIcon(_tab5Icon);
             }
-            _notificationString = "test";
 
             CustomOnScroll();
         }
@@ -363,7 +331,7 @@ namespace BottomNavigationViewPager
             }
             catch (System.Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine((ex.InnerException ?? ex).Message);
+                System.Console.WriteLine((ex.InnerException ?? ex).Message);
             }
         }
 
@@ -531,11 +499,9 @@ namespace BottomNavigationViewPager
             notificationManager.CreateNotificationChannel(channel);
         }
 
-        public static bool _notifying = true;
-
         public async void NotificationTimer()
         {
-            while (_notifying)
+            while (Globals.AppSettings._notifying)
             {
                 await Task.Delay(120000);
             }
@@ -544,27 +510,36 @@ namespace BottomNavigationViewPager
         {
             base.OnNewIntent(intent);
 
+            string url = intent.Extras.GetString("URL");
+
             var index = MainActivity._NotificationURLList.Count;
-            
-            switch (_viewPager.CurrentItem)
+            try
             {
-                case 0:
-                    _fm1.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
-                    break;
-                case 1:
-                    _fm2.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
-                    break;
-                case 2:
-                    _fm3.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
-                    break;
-                case 3:
-                    _fm4.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
-                    break;
-                case 4:
-                    _fm5.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
-                    break;
+                switch (_viewPager.CurrentItem)
+                {
+
+                    case 0:
+                        _fm1.LoadCustomUrl(url);
+                        break;
+                    case 1:
+                        _fm2.LoadCustomUrl(url);
+                        break;
+                    case 2:
+                        _fm3.LoadCustomUrl(url);
+                        break;
+                    case 3:
+                        _fm4.LoadCustomUrl(url);
+                        break;
+                    case 4:
+                        _fm5.LoadCustomUrl(url);
+                        break;
+                }
             }
-            _fm1.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
+            catch
+            {
+
+            }
+            //_fm1.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
         }
 
         protected override void OnDestroy()

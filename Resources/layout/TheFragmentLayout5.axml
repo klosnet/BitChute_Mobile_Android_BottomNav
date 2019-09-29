@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
 	android:id="@+id/settingsFragLayout"
 	android:backgroundTint="@android:color/black"
+	android:background="@android:color/black"
     android:layout_height="match_parent">
 	<LinearLayout
 		xmlns:android="http://schemas.android.com/apk/res/android"
@@ -33,6 +34,7 @@
 		android:orientation="vertical"
 		android:minWidth="25px"
 		android:minHeight="25px"
+
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/linearLayout2">
@@ -46,14 +48,16 @@
 			<RadioButton
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:checked="false"
+					android:textColor="#3498db"
 				android:text="Zoom Cntrl On"
+				android:buttonTint="#3498db"
 				android:id="@+id/_zoomControlOnBtn" />
 			<RadioButton
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+					android:textColor="#3498db"
+				android:buttonTint="#3498db"
 				android:text="Off"
-				android:checked="true"
 				android:id="@+id/_zoomControlOffBtn" />
 		</RadioGroup>
 	</LinearLayout>
@@ -74,13 +78,17 @@
 				<RadioButton
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:checked="true"
+									android:buttonTint="#3498db"
+					android:textColor="#3498db"
 					android:text="Tab3 Hide On"
 					android:id="@+id/_tab3HideOverrideOn" />
 				<RadioButton
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+									android:buttonTint="#3498db"
+					android:textColor="#3498db"
 					android:text="Off"
+
 					android:id="@+id/_tab3HideOverrideOff" />
 			</RadioGroup>
 		</LinearLayout>
@@ -101,12 +109,15 @@
 				<RadioButton
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:checked="true"
+									android:buttonTint="#3498db"
+					android:textColor="#3498db"
 					android:text="Tab1 Featured On"
 					android:id="@+id/_tab1FeaturedCreatorsOn" />
 				<RadioButton
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+									android:buttonTint="#3498db"
+					android:textColor="#3498db"
 					android:text="Off"
 					android:id="@+id/_tab1FeaturedCreatorsOff" />
 			</RadioGroup>
@@ -127,12 +138,15 @@
 				<RadioButton
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:checked="true"
+									android:buttonTint="#3498db"
 					android:text="Fan Mode Off"
+					android:textColor="#3498db"
 					android:id="@+id/_fanModeOffBtn" />
 				<RadioButton
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+									android:buttonTint="#3498db"
+					android:textColor="#3498db"
 					android:text="On"
 					android:id="@+id/_fanModeOnBtn" />
 			</RadioGroup>
@@ -148,7 +162,6 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:id="@+id/tab4OverrideSpinner" />
-		
 		</LinearLayout>
 		<LinearLayout
 			android:orientation="vertical"
@@ -167,12 +180,15 @@
 				<RadioButton
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:checked="true"
+									android:buttonTint="#3498db"
 					android:text="Settings Override Off"
+					android:textColor="#3498db"
 					android:id="@+id/_stOverrideOffRb" />
 				<RadioButton
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+									android:buttonTint="#3498db"
+					android:textColor="#3498db"
 					android:text="On"
 					android:id="@+id/_stOverrideOnRb" />
 			</RadioGroup>
@@ -195,10 +211,6 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:id="@+id/tab5OverrideSpinner" />
-				<TwoLineListItem
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:id="@+id/twoLineListItem1" />
 			</LinearLayout>
 	</LinearLayout>
 		<LinearLayout
@@ -214,11 +226,41 @@
 				android:visibility="gone"
 				android:layout_height="wrap_content"
 				android:id="@+id/_notificationTestButton" />
-			<TextView
-				android:text="Text"
-				android:id="@+id/versionTextView"
+			<LinearLayout
+				android:orientation="horizontal"
+				android:minWidth="25px"
+				android:minHeight="25px"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content" />
+				android:layout_height="wrap_content"
+				android:id="@+id/linearLayout10" >
+			<RadioGroup
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+				<RadioButton
+					android:text="notifications off"
+										android:buttonTint="#3498db"
+						android:textColor="#3498db"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:id="@+id/_notificationsOffRb" />
+				<RadioButton
+					android:text="on"
+										android:buttonTint="#3498db"
+						android:textColor="#3498db"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:id="@+id/_notificationsOnRb" />
+			</RadioGroup>
+			</LinearLayout>
+			<android.support.v7.widget.LinearLayoutCompat
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/linearLayoutCompat1" />
 		</LinearLayout>
 		<GridLayout
 			android:minWidth="30px"
@@ -227,10 +269,10 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/gridLayout1">
-			<ListView
-				android:minWidth="25px"
-				android:minHeight="25px"
-				android:id="@+id/listView1" />
+			<TextView
+				android:text="Text"
+				android:textColor="#3498db"
+				android:id="@+id/versionTextView"/>
 		</GridLayout>
 
 </LinearLayout>

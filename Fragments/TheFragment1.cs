@@ -212,6 +212,8 @@ namespace BottomNavigationViewPager.Fragments
             await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
 
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+
+            _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
         }
 
         public void LoadCustomUrl(string url)

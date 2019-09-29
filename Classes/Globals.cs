@@ -5,7 +5,7 @@ namespace BottomNavigationViewPager.Classes
 {
     public class Globals
     {
-        public static string _appVersion = "10.6.3.NotificationAdder.nonGPS";
+        public static string _appVersion = "10.6.4.NotificationAdder.nonGPS";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
@@ -34,6 +34,7 @@ namespace BottomNavigationViewPager.Classes
 
         public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
              .Context.GetSystemService(Context.ActivityService);
+
 
         /// <summary>
         /// global bool setting: 
@@ -101,6 +102,10 @@ namespace BottomNavigationViewPager.Classes
             /// the ms delay for fixing link overflow on mobile
             /// </summary>
             public static int _linkOverflowFixDelay = 6000;
+
+            public static int _notificationDelay = 120000;
+
+            public static bool _notifying = false;
         }
 
         /// <summary>
@@ -197,6 +202,15 @@ namespace BottomNavigationViewPager.Classes
             public static string _jqShowMore = "javascript:(function() { " +
                             "document.listingExtend(40);" + "})()";
 
+            /// <summary>
+            /// disables the tooltips because they block the controls and stick
+            /// on screen in all android browsers
+            /// </summary>
+            public static string _jsDisableTooltips = "javascript:(function() { " +
+                            "document.getElementById('video-like').data-toggle=''; " + "})()" + "\r\n"
+                + "javascript:(function() { " +
+                            "document.getElementById('video-dislike').data-toggle=''; " + "})()";
+                
         }
 
         /// <summary>
