@@ -576,7 +576,7 @@ namespace BottomNavigationViewPager
                         _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
                         break;
                 }
-
+                Globals.AppState.Display._horizontal = true;
                 _window.ClearFlags(_winflagnotfullscreen);
                 _window.AddFlags(_winflagfullscreen);
             }
@@ -605,6 +605,7 @@ namespace BottomNavigationViewPager
                         _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
                         break;
                 }
+                Globals.AppState.Display._horizontal = false;
                 _window.ClearFlags(_winflagfullscreen);
                 _window.AddFlags(_winflagnotfullscreen);
             }

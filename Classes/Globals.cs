@@ -87,6 +87,14 @@ namespace BottomNavigationViewPager.Classes
         //    }
         //    return _bkgrd;
         //}
+        public class AppState
+        {
+            public class Display
+            {
+                public static bool _horizontal = false;
+            }
+        }
+
 
         /// <summary>
         /// contains global var settings for the app

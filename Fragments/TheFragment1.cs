@@ -236,6 +236,11 @@ namespace BottomNavigationViewPager.Fragments
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
 
+                if (Globals.AppState.Display._horizontal)
+                {
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                }
+
                 base.OnPageFinished(_view, url);
                 //string _jsHideBannerC = "javascript:(function() { " +
                 //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
