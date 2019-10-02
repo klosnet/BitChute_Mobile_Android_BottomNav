@@ -62,8 +62,7 @@ using static Android.Views.View;
 using Android.Graphics.Drawables;
 using System.Net;
 using Java.Net;
-
-//app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
+using Android.Content.Res;
 
 namespace BottomNavigationViewPager
 {
@@ -74,7 +73,7 @@ namespace BottomNavigationViewPager
               DataHost = "bitchute.com",
               DataPathPrefix = "",
               AutoVerify = true)]
-    [Android.App.Activity(Label = "BitChute", Theme = "@style/AppTheme", MainLauncher = true,
+    [Android.App.Activity(LaunchMode = Android.Content.PM.LaunchMode.SingleTop, Label = "BitChute", Theme = "@style/AppTheme", MainLauncher = true,
         ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize,
         ParentActivity = typeof(MainActivity))]
 
@@ -93,19 +92,29 @@ namespace BottomNavigationViewPager
         Fragment[] _fragments;
         
         public static MainActivity _main;
+        public static Bundle _bundle;
         
         public static Globals _globals = new Globals();
-        //public static ExtNotifications _notifications = new ExtNotifications();
+        private static ExtNotifications notifications = new ExtNotifications();
         public static bool _navBarHideTimeout = false;
 
         //notification items:
-        public static readonly int NOTIFICATION_ID = 1000;
+        public static int NOTIFICATION_ID = 1000;
         public static readonly string CHANNEL_ID = "location_notification";
         public static readonly string COUNT_KEY = "count";
+
+        public static Window _window;
+
+        private string notificationString;
+
+
+
+        public static List<string> _NotificationURLList = new List<string>();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             _main = this;
+            _window = this.Window; 
 
             var _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
 
@@ -114,6 +123,7 @@ namespace BottomNavigationViewPager
             TheFragment5._tab3Hide = _prefs.GetBoolean("tab3hide", true);
             TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
             TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
+            
 
             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
@@ -140,6 +150,8 @@ namespace BottomNavigationViewPager
             _viewPager.OffscreenPageLimit = 4;
             
             CreateNotificationChannel();
+
+            _bundle = savedInstanceState;
         }
 
         public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
@@ -158,6 +170,9 @@ namespace BottomNavigationViewPager
                 _fm5
             };
         }
+        
+
+        internal static ExtNotifications Notifications { get => notifications; set => notifications = value; }
 
         public static bool _navHidden = false;
 
@@ -189,10 +204,6 @@ namespace BottomNavigationViewPager
         {
             while (!_navHidden)
             {
-                //canceling this for now
-                //await Task.Run(() => System.Threading.Thread.Sleep(1000));
-
-                //lets see if this is faster
                 await Task.Delay(1000);
 
                 _navTimer++;
@@ -202,14 +213,6 @@ namespace BottomNavigationViewPager
                     _navTimeout = false;
                     _navHidden = true;
                 }
-            }
-        }
-
-        public async void HideNavBarAfterDelay()
-        {
-            if (!_navBarHideTimeout)
-            {
-                await Task.Delay(500);
             }
         }
 
@@ -296,6 +299,7 @@ namespace BottomNavigationViewPager
                 _navViewItemList[4].SetTitle(TheFragment5._tab5OverridePreference);
                 _navViewItemList[4].SetIcon(_tab5Icon);
             }
+
             CustomOnScroll();
         }
 
@@ -328,7 +332,7 @@ namespace BottomNavigationViewPager
             }
             catch (System.Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine((ex.InnerException ?? ex).Message);
+                System.Console.WriteLine((ex.InnerException ?? ex).Message);
             }
         }
 
@@ -352,7 +356,7 @@ namespace BottomNavigationViewPager
         /// <summary>
         /// method to change any tab icon, title
         /// it takes the tab number integer and string change details
-        /// string can be null for now can be null or blank, use "home" "feed" "subs" or "explore" with int s 3 & 4
+        /// string can be null for now can be null or blank, use "Home" "Feed" "Subs" or "Explore" with int s 3 & 4
         /// int representing tab 0 is farthest left going up to the right
         /// </summary>
         /// <param name="changeDetails"></param>
@@ -462,7 +466,7 @@ namespace BottomNavigationViewPager
         {
             _fm5.ShowAppSettingsMenu();
         }
-        
+
         //public override void OnWindowFocusChanged(bool hasFocus)
         //{
         //    Globals._bkgrd = true;
@@ -471,7 +475,7 @@ namespace BottomNavigationViewPager
         //    {
         //        Task.Delay(1200);
 
-        //        //_globals.IsInBkGrd();
+        //        _globals.IsInBkGrd();
         //    }
         //}
 
@@ -484,7 +488,7 @@ namespace BottomNavigationViewPager
                 // channel on older versions of Android.
                 return;
             }
-
+            
             var name = "BitChute";
             var description = "BitChute for Android";
             var channel = new Android.App.NotificationChannel(CHANNEL_ID, name, Android.App.NotificationImportance.Default)
@@ -496,15 +500,113 @@ namespace BottomNavigationViewPager
             notificationManager.CreateNotificationChannel(channel);
         }
 
-        public static bool _notifying = true;
-
         public async void NotificationTimer()
         {
-            while (_notifying)
+            while (Globals.AppSettings._notifying)
             {
-                await Task.Delay(20000);
+                await Task.Delay(240000);
+            }
+        }
+        protected override void OnNewIntent(Intent intent)
+        {
+            base.OnNewIntent(intent);
 
-               // _notifications.ExtNotificatonEvents();
+            string url = intent.Extras.GetString("URL");
+
+            var index = MainActivity._NotificationURLList.Count;
+            try
+            {
+                switch (_viewPager.CurrentItem)
+                {
+
+                    case 0:
+                        _fm1.LoadCustomUrl(url);
+                        break;
+                    case 1:
+                        _fm2.LoadCustomUrl(url);
+                        break;
+                    case 2:
+                        _fm3.LoadCustomUrl(url);
+                        break;
+                    case 3:
+                        _fm4.LoadCustomUrl(url);
+                        break;
+                    case 4:
+                        _fm5.LoadCustomUrl(url);
+                        break;
+                }
+            }
+            catch
+            {
+
+            }
+            //_fm1.LoadCustomUrl(MainActivity._NotificationURLList[intent.Extras.GetInt("Count")].ToString());
+        }
+        
+        WindowManagerFlags _winflagfullscreen = WindowManagerFlags.Fullscreen;
+        
+        WindowManagerFlags _winflagnotfullscreen = WindowManagerFlags.ForceNotFullscreen;
+
+        public override void OnConfigurationChanged(Configuration newConfig)
+        {
+            base.OnConfigurationChanged(newConfig);
+
+            if (newConfig.Orientation == Orientation.Landscape)
+            {
+                switch (_viewPager.CurrentItem)
+                {
+                    case 0:
+                        _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
+                        _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        break;
+                    case 1:
+                        _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
+                        _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        break;
+                    case 2:
+                        _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
+                        _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        break;
+                    case 3:
+                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
+                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        break;
+                    case 4:
+                        _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsHideTitle);
+                        _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                        break;
+                }
+
+                _window.ClearFlags(_winflagnotfullscreen);
+                _window.AddFlags(_winflagfullscreen);
+            }
+            if (newConfig.Orientation == Orientation.Portrait)
+            {
+                switch (_viewPager.CurrentItem)
+                {
+                    case 0:
+                        _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
+                        _fm1.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        break;
+                    case 1:
+                        _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
+                        _fm2.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        break;
+                    case 2:
+                        _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
+                        _fm3.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        break;
+                    case 3:
+                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
+                        _fm4.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        break;
+                    case 4:
+                        _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowTitle);
+                        _fm5.LoadCustomUrl(Globals.JavascriptCommands._jsShowWatchTab);
+                        break;
+                }
+                _window.ClearFlags(_winflagfullscreen);
+                _window.AddFlags(_winflagnotfullscreen);
             }
         }
 

@@ -13,7 +13,7 @@ using static Android.Views.View;
 
 namespace BottomNavigationViewPager.Fragments
 {
-    [Android.Runtime.Register("onKeyDown", "(ILandroid/view/KeyEvent;)Z", "GetOnKeyDown_ILandroid_view_KeyEvent_Handler")]
+    //[Android.Runtime.Register("onKeyDown", "(ILandroid/view/KeyEvent;)Z", "GetOnKeyDown_ILandroid_view_KeyEvent_Handler")]
     public class TheFragment3 : Fragment
     {
         string _title;
@@ -87,6 +87,10 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
 
             }
+            else
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsShowCarousel);
+            }
 
             if (TheFragment5._zoomControl)
             {
@@ -158,7 +162,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wvRling = true;
 
-                await Task.Delay(800);
+                await Task.Delay(Globals.AppSettings._tabDelay);
 
                 _wvRl = true;
 
@@ -181,10 +185,27 @@ namespace BottomNavigationViewPager.Fragments
         //    }
         //}
 
+        /// <summary>
+        /// we have to set this with a delay or it won't fix the link overflow
+        /// </summary>
+        public static async void HideLinkOverflow()
+        {
+            await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
+
+            _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+        }
+
+
+        public void LoadCustomUrl(string url)
+        {
+            _wv.LoadUrl(url);
+        }
+
         public class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
             {
+
                 base.OnPageFinished(view, url);
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
@@ -208,6 +229,8 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
 
                 SetReload();
+                
+                HideLinkOverflow();
             }
         }
     }

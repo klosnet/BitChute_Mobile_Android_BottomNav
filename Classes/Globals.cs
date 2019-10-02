@@ -5,12 +5,14 @@ namespace BottomNavigationViewPager.Classes
 {
     public class Globals
     {
+        public static string _appVersion = "10.6.4.3.NotificationAdder.GPS";
+
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);
         
-        public static bool _setWebView { get; set; }
-        public static bool _navIsTimingOut { get; set; }
-        public static int _wvHeight { get; set; }
+        //public static bool _setWebView { get; set; }
+        //public static bool _navIsTimingOut { get; set; }
+        //public static int _wvHeight { get; set; }
 
         /// <summary>
         /// tab 4 string should be set to strings like
@@ -29,10 +31,11 @@ namespace BottomNavigationViewPager.Classes
         /// WebView cookies don't transfer automatically to httprequests
         /// </summary>
         public static string _cookieString { get; set; }
-        
-        public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
-             .Context.GetSystemService(Context.ActivityService);
-        
+
+        //public static Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
+        //     .Context.GetSystemService(Context.ActivityService);
+
+
         /// <summary>
         /// global bool setting: 
         /// returns/should be set to false if this app is in the foreground
@@ -42,14 +45,14 @@ namespace BottomNavigationViewPager.Classes
         /// </summary>
         public static bool _bkgrd = true;
 
-        ///// <summary>
-        ///// returns false when the ActivityManager contains
-        ///// an entry for this app running in foreground: 
-        ///// importance is present in package.name with OS focus
-        ///// 
-        ///// requires a modified android manifest for get_task ALLOWED
-        ///// </summary>
-        ///// <returns>bool</returns>
+        /// <summary>
+        /// returns false when the ActivityManager contains
+        /// an entry for this app running in foreground: 
+        /// importance is present in package.name with OS focus
+        /// 
+        /// requires a modified an  droid manifest for get_task ALLOWED
+        /// </summary>
+        /// <returns>bool</returns>
         //public bool IsInBkGrd()
         //{
         //    var _ctx = Android.App.Application.Context;
@@ -61,21 +64,23 @@ namespace BottomNavigationViewPager.Classes
 
         //    list.AddRange(_am.RunningAppProcesses);
 
-        //    foreach (var _process in list)
+        //    if (list != null)
         //    {
-        //        if (_process.Importance == Android.App.ActivityManager.RunningAppProcessInfo.ImportanceForeground)
-        //        //if (_process.Importance == Android.App.ActivityManager.RunningAppProcessInfo.ImportanceForeground)
+        //        foreach (var _process in list)
         //        {
-        //            foreach (var _pkg in _process.PkgList)
+        //            if (_process.Importance == Android.App.ActivityManager.RunningAppProcessInfo.ImportanceForeground)
         //            {
-        //                if (_pkg == _ctx.PackageName)
+        //                foreach (var _pkg in _process.PkgList)
         //                {
-        //                    _bkgrd = false;
-        //                }
+        //                    if (_pkg == _ctx.PackageName)
+        //                    {
+        //                        _bkgrd = false;
+        //                    }
 
-        //                else
-        //                {
-        //                    _bkgrd = true;
+        //                    else
+        //                    {
+        //                        _bkgrd = true;
+        //                    }
         //                }
         //            }
         //        }
@@ -83,6 +88,25 @@ namespace BottomNavigationViewPager.Classes
         //    return _bkgrd;
         //}
 
+        /// <summary>
+        /// contains global var settings for the app
+        /// </summary>
+        public class AppSettings
+        {
+            /// <summary>
+            /// the ms delay for setting a pop back to root for each tab
+            /// </summary>
+            public static int _tabDelay = 800;
+
+            /// <summary>
+            /// the ms delay for fixing link overflow on mobile
+            /// </summary>
+            public static int _linkOverflowFixDelay = 6000;
+
+            public static int _notificationDelay = 120000;
+
+            public static bool _notifying = false;
+        }
 
         /// <summary>
         /// this class contains javascript commands in the form of strings that
@@ -178,6 +202,38 @@ namespace BottomNavigationViewPager.Classes
             public static string _jqShowMore = "javascript:(function() { " +
                             "document.listingExtend(40);" + "})()";
 
+            /// <summary>
+            /// disables the tooltips because they block the controls and stick
+            /// on screen in all android browsers
+            /// </summary>
+            public static string _jsDisableTooltips = "javascript:(function() { " +
+                            "document.getElementById('video-like').data-toggle=''; " + "})()" + "\r\n"
+                + "javascript:(function() { " +
+                            "document.getElementById('video-dislike').data-toggle=''; " + "})()";
+
+            /// <summary>
+            /// hides the video title
+            /// </summary>
+            public static string _jsHideTitle = "javascript:(function() { " +
+                            "document.getElementById('video-title').style.display='none'; " + "})()";
+
+            /// <summary>
+            /// shows the title bar
+            /// </summary>
+            public static string _jsShowTitle = "javascript:(function() { " +
+                            "document.getElementById('video-title').style.display='block'; " + "})()";
+
+            /// <summary>
+            /// hides the video watch block
+            /// </summary>
+            public static string _jsHideWatchTab = "javascript:(function() { " +
+                            "document.getElementsByClassName('tab-scroll-outer')[0].style.display='none'; " + "})()";
+
+            /// <summary>
+            /// shows the video watch block
+            /// </summary>
+            public static string _jsShowWatchTab = "javascript:(function() { " +
+                            "document.getElementsByClassName('tab-scroll-outer')[0].style.display='block'; " + "})()";
         }
 
         /// <summary>

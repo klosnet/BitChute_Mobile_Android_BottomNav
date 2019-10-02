@@ -193,7 +193,7 @@ namespace BottomNavigationViewPager.Fragments
             {
                 _wvRling = true;
 
-                await Task.Delay(800);
+                await Task.Delay(Globals.AppSettings._tabDelay);
 
                 _wvRl = true;
 
@@ -204,17 +204,34 @@ namespace BottomNavigationViewPager.Fragments
         //I'll explain this later
         static int _autoInt = 0;
 
+        /// <summary>
+        /// we have to set this with a delay or it won't fix the link overflow
+        /// </summary>
+        public static async void HideLinkOverflow()
+        {
+            await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
+
+            _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+
+            _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
+        }
+
+        public void LoadCustomUrl(string url)
+        {
+            _wv.LoadUrl(url);
+        }
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView _view, string url)
             {
+                HideLinkOverflow();
+
                 if (!TheFragment5._tab1FeaturedOn)
                 {
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
                 }
-
-                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
-
+                
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
@@ -222,7 +239,8 @@ namespace BottomNavigationViewPager.Fragments
                 base.OnPageFinished(_view, url);
                 //string _jsHideBannerC = "javascript:(function() { " +
                 //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
-                
+
+
                 //add one to the autoint... for some reason if Tab1 has 
                 //_wv.Settings.MediaPlaybackRequiresUserGesture = false; set then it won't work on the other tabs
                 //this is a workaround for that glitch
@@ -234,7 +252,7 @@ namespace BottomNavigationViewPager.Fragments
                 {
                     _wv.Settings.MediaPlaybackRequiresUserGesture = false;
                 }
-
+                _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
 
                 SetReload();
             }
