@@ -106,9 +106,7 @@ namespace BottomNavigationViewPager
         public static Window _window;
 
         private string notificationString;
-
-
-
+        
         public static List<string> _NotificationURLList = new List<string>();
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -127,9 +125,7 @@ namespace BottomNavigationViewPager
 
             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
-
-            _main = this;
-
+            
             base.OnCreate(savedInstanceState);
 
             // Set our view from the "main" layout resource
