@@ -91,11 +91,14 @@ namespace BottomNavigationViewPager.Classes
         {
             public class Display
             {
+                /// <summary>
+                /// returns true when the app detects that device
+                /// has been rotated horizontally
+                /// </summary>
                 public static bool _horizontal = false;
             }
         }
-
-
+        
         /// <summary>
         /// contains global var settings for the app
         /// </summary>
@@ -242,6 +245,13 @@ namespace BottomNavigationViewPager.Classes
             /// </summary>
             public static string _jsShowWatchTab = "javascript:(function() { " +
                             "document.getElementsByClassName('tab-scroll-outer')[0].style.display='block'; " + "})()";
+
+
+
+            public static string _jsHidePageBar = "javascript:(function() { " +
+                            "document.getElementsByClassName('page-bar')[0].style.display='none'; " + "})()";  
+
+
         }
 
         /// <summary>
@@ -256,6 +266,8 @@ namespace BottomNavigationViewPager.Classes
             public static string _explore =  "https://www.bitchute.com/channels/";
 
             public static string _settings = "https://www.bitchute.com/settings/";
+
+            public static string _myChannel = "https://www.bitchute.com/channel/";
         }
     }
 }

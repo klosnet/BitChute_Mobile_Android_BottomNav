@@ -667,7 +667,9 @@ namespace BottomNavigationViewPager.Fragments
 
                 if (Globals.AppState.Display._horizontal)
                 {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
                 }
                 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);

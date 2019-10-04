@@ -373,10 +373,10 @@ namespace BottomNavigationViewPager
                     {
                         if (changeDetails == "" || changeDetails == null)
                         {
-                            _navViewItemList[tab].SetTitle("Subs");
-                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
-                            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
-                            TheFragment4._url = Globals.URLs._subspage;
+                            _navViewItemList[tab].SetTitle("MyChannel");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_mychannel));
+                            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
+                            TheFragment4._url = Globals.URLs._myChannel;
                         }
                         if (changeDetails == "Home")
                         {
@@ -414,10 +414,10 @@ namespace BottomNavigationViewPager
                     {
                         if (changeDetails == "" || changeDetails == null)
                         {
-                            _navViewItemList[tab].SetTitle("Subs");
-                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_subs));
-                            _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_subs);
-                            TheFragment5._url = Globals.URLs._subspage;
+                            _navViewItemList[tab].SetTitle("Settings");
+                            _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_settings));
+                            _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
+                            TheFragment5._url = Globals.URLs._myChannel;
                         }
                         if (changeDetails == "Home")
                         {
