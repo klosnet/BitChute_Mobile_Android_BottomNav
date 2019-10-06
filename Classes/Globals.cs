@@ -5,7 +5,7 @@ namespace BottomNavigationViewPager.Classes
 {
     public class Globals
     {
-        public static string _appVersion = "10.6.4.3.NotificationAdder.GPS";
+        public static string _appVersion = "10.6.4.4.NotificationAdder.GPS";
 
         //   Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
         //         .Context.GetSystemService(Context.ActivityService);

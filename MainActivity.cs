@@ -104,8 +104,6 @@ namespace BottomNavigationViewPager
         public static readonly string COUNT_KEY = "count";
 
         public static Window _window;
-
-        private string notificationString;
         
         public static List<string> _NotificationURLList = new List<string>();
 
@@ -122,7 +120,6 @@ namespace BottomNavigationViewPager
             TheFragment5._tab1FeaturedOn = _prefs.GetBoolean("t1featured", true);
             TheFragment5._settingsTabOverride = _prefs.GetBoolean("settingstaboverride", false);
             
-
             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_mychannel);
             _tab5Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
             
@@ -146,8 +143,6 @@ namespace BottomNavigationViewPager
             _viewPager.OffscreenPageLimit = 4;
             
             CreateNotificationChannel();
-
-            _bundle = savedInstanceState;
         }
 
         public static TheFragment1 _fm1 = TheFragment1.NewInstance("Home", "tab_home");
@@ -166,7 +161,6 @@ namespace BottomNavigationViewPager
                 _fm5
             };
         }
-        
 
         internal static ExtNotifications Notifications { get => notifications; set => notifications = value; }
 
@@ -181,7 +175,7 @@ namespace BottomNavigationViewPager
         /// .. timer resets every time it's called
         /// . works with a custom scroll listener
         /// </summary>
-        public void CustomOnScroll()
+        public void CustomOnTouch()
         {
             if (_navTimer != 0)
                 _navTimer = 0;
@@ -203,6 +197,7 @@ namespace BottomNavigationViewPager
                 await Task.Delay(1000);
 
                 _navTimer++;
+
                 if (_navTimer == 8)
                 {
                     _navigationView.Visibility = ViewStates.Gone;
@@ -296,7 +291,7 @@ namespace BottomNavigationViewPager
                 _navViewItemList[4].SetIcon(_tab5Icon);
             }
 
-            CustomOnScroll();
+            CustomOnTouch();
         }
 
         //BottomNavigationView.NavigationItemReselectedEventArgs

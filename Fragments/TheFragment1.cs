@@ -26,7 +26,6 @@ namespace BottomNavigationViewPager.Fragments
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         bool tabLoaded = false;
-
         //static MainActivity _main = new MainActivity();
 
         public static TheFragment1 NewInstance(string title, string icon) {
@@ -68,19 +67,16 @@ namespace BottomNavigationViewPager.Fragments
                 //_wv.Settings.AllowFileAccess = true;
 
                 //_wv.Settings.AllowContentAccess = true;
-
-                //this didn't work when I put it here.  strange.. it would disable the setting on 
-                //every other tab
-               // _wv.Settings.MediaPlaybackRequiresUserGesture = false;
-
+                
                 _wv.LoadUrl(_url);
 
                 tabLoaded = true;
             }
-
-            _wv.SetOnScrollChangeListener(new ExtScrollListener());
+            
+            //_wv.SetOnScrollChangeListener(new ExtScrollListener());
             //_wv.Touch += ViewOnTouch;
-
+            _wv.SetOnTouchListener(new ExtTouchListener());
+            
             return _view;
         }
 
@@ -113,45 +109,50 @@ namespace BottomNavigationViewPager.Fragments
         /// </summary>
         public static MainActivity _main = new MainActivity();
 
-        //public bool OnTouch(object sender, MotionEvent e)
+        //public bool OnTouch(View v, MotionEvent e)
         //{
         //    return false;
         //}
 
         //private void ViewOnTouch(object sender, View.TouchEventArgs touchEventArgs)
         //{
-        //    var test = "yo";
-
-        //   // _wv.ComputeScroll();
+        //    // _wv.ComputeScroll();
         //    //Globals._wvHeight = _wv.ContentHeight;
 
         //    //string message;
         //    switch (touchEventArgs.Event.Action & MotionEventActions.Mask)
         //    {
-
         //        case MotionEventActions.Down:
-        //        case MotionEventActions.Move:
-        //            _main.CustomOnScroll();
-        //            break;
+        //        //case MotionEventActions.Move:
+        //        //    _main.CustomOnScroll();
+        //        //    break;
 
         //        case MotionEventActions.Up:
+        //            var check = 0;
         //            //_main.HideNavBarAfterDelay();
         //            break;
-
         //        default:
         //            break;
         //    }
-
-            
         //}
 
-        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
-            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+            public bool OnTouch(View v, MotionEvent e)
             {
-                _main.CustomOnScroll();
+                _main.CustomOnTouch();
+
+                return false;
             }
         }
+
+        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        //{
+        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+        //    {
+        //        _main.CustomOnScroll();
+        //    }
+        //}
 
         /// <summary>
         /// tells the webview to GoBack, if it can
@@ -221,7 +222,7 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(url);
         }
 
-        public async void HidePageTitle()
+        public static async void HidePageTitle()
         {
             await Task.Delay(5000);
 
@@ -250,13 +251,13 @@ namespace BottomNavigationViewPager.Fragments
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+
+                    HidePageTitle();
                 }
 
-                base.OnPageFinished(_view, url);
                 //string _jsHideBannerC = "javascript:(function() { " +
                 //   "document.getElementsByClassName('logo-wrap--home').style.display='none'; " + "})()";
-
-
+                
                 //add one to the autoint... for some reason if Tab1 has 
                 //_wv.Settings.MediaPlaybackRequiresUserGesture = false; set then it won't work on the other tabs
                 //this is a workaround for that glitch
@@ -271,6 +272,8 @@ namespace BottomNavigationViewPager.Fragments
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
 
                 SetReload();
+                
+                base.OnPageFinished(_view, url);
             }
         }
     }

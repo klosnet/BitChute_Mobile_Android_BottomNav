@@ -17,6 +17,7 @@ namespace BottomNavigationViewPager.Fragments
         string _icon;
 
         protected static WebView _wv;
+        readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         public static string _url = "https://bitchute.com/subscriptions/";
 
@@ -52,7 +53,7 @@ namespace BottomNavigationViewPager.Fragments
 
             if (!tabLoaded)
             {
-                _wv.SetWebViewClient(new ExtWebViewClient());
+                _wv.SetWebViewClient(_wvc);
 
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
@@ -66,9 +67,20 @@ namespace BottomNavigationViewPager.Fragments
 
                 tabLoaded = true;
             }
-            _wv.SetOnScrollChangeListener(new ExtScrollListener());
-
+            //_wv.SetOnScrollChangeListener(new ExtScrollListener());
+            _wv.SetOnTouchListener(new ExtTouchListener());
+            
             return _view;
+        }
+
+        public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
+        {
+            public bool OnTouch(View v, MotionEvent e)
+            {
+                _main.CustomOnTouch();
+
+                return false;
+            }
         }
 
         public void OnSettingsChanged(List<object> settings)
@@ -88,13 +100,13 @@ namespace BottomNavigationViewPager.Fragments
 
         public static MainActivity _main = new MainActivity();
 
-        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
-        {
-            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-            {
-                _main.CustomOnScroll();
-            }
-        }
+        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        //{
+        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+        //    {
+        //        _main.CustomOnScroll();
+        //    }
+        //}
 
         public void WebViewGoBack()
         {
@@ -153,7 +165,7 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(url);
         }
 
-        public async void HidePageTitle()
+        public static async void HidePageTitle()
         {
             await Task.Delay(5000);
 
@@ -162,11 +174,8 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
         }
 
-
         private class ExtWebViewClient : WebViewClient
         {
-            private static TheFragment2 _fm2 = MainActivity._fm2;
-
             public override void OnPageFinished(WebView view, string url)
             {
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
@@ -180,13 +189,16 @@ namespace BottomNavigationViewPager.Fragments
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
-                    _fm2.HidePageTitle();
                 }
                 
                 SetReload();
-                
                 HideLinkOverflow();
-                
+
+                if (Globals.AppState.Display._horizontal)
+                {
+                    HidePageTitle();
+                }
+
                 base.OnPageFinished(view, url);
             }
         }

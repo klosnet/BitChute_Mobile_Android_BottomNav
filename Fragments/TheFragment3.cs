@@ -20,6 +20,7 @@ namespace BottomNavigationViewPager.Fragments
         string _icon;
 
         protected static WebView _wv;
+        readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         bool tabLoaded = false;
 
@@ -56,7 +57,7 @@ namespace BottomNavigationViewPager.Fragments
 
             if (!tabLoaded)
             {
-                _wv.SetWebViewClient(new ExtWebViewClient());
+                _wv.SetWebViewClient(_wvc);
 
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
 
@@ -72,8 +73,7 @@ namespace BottomNavigationViewPager.Fragments
 
                 tabLoaded = true;
             }
-
-            _wv.SetOnScrollChangeListener(new ExtScrollListener());
+            _wv.SetOnTouchListener(new ExtTouchListener());
 
             return _view;
         }
@@ -120,13 +120,23 @@ namespace BottomNavigationViewPager.Fragments
 
         public static MainActivity _main = new MainActivity();
 
-        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        public class ExtTouchListener : Java.Lang.Object, View.IOnTouchListener
         {
-            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+            public bool OnTouch(View v, MotionEvent e)
             {
-                _main.CustomOnScroll();
+                _main.CustomOnTouch();
+
+                return false;
             }
         }
+
+        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        //{
+        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+        //    {
+        //        _main.CustomOnTouch();
+        //    }
+        //}
 
         public void WebViewGoBack()
         {
@@ -195,13 +205,12 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
         }
 
-
         public void LoadCustomUrl(string url)
         {
             _wv.LoadUrl(url);
         }
 
-        public async void HidePageTitle()
+        public static async void HidePageTitle()
         {
             await Task.Delay(5000);
 
@@ -210,15 +219,10 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
         }
 
-
         public class ExtWebViewClient : WebViewClient
         {
-            private TheFragment3 _fm3 = MainActivity._fm3;
-
             public override void OnPageFinished(WebView view, string url)
             {
-
-                base.OnPageFinished(view, url);
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
 
@@ -244,16 +248,15 @@ namespace BottomNavigationViewPager.Fragments
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
-                    _fm3.HidePageTitle();
+                    HidePageTitle();
                 }
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
 
                 SetReload();
-                
                 HideLinkOverflow();
 
-                
+                base.OnPageFinished(view, url);
             }
         }
     }
