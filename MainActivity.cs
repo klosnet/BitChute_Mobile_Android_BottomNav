@@ -63,6 +63,8 @@ using Android.Graphics.Drawables;
 using System.Net;
 using Java.Net;
 using Android.Content.Res;
+using StartServices.Servicesclass;
+using System;
 
 namespace BottomNavigationViewPager
 {
@@ -106,12 +108,26 @@ namespace BottomNavigationViewPager
         public static Window _window;
 
         public static List<string> _NotificationURLList = new List<string>();
+        
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             _main = this;
             _window = this.Window;
 
+            var mServiceIntent = new Intent(this, typeof(CustomStickyService));
+            StartService(mServiceIntent);
+            try
+            {
+                StartService(mServiceIntent);
+                PowerManager pm = (PowerManager)GetSystemService(Context.PowerService);
+                PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.Partial, "My Tag");
+                wl.Acquire();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             var _prefs = Android.App.Application.Context.GetSharedPreferences("BitChute", FileCreationMode.Private);
 
             TheFragment5._zoomControl = _prefs.GetBoolean("zoomcontrol", false);
@@ -479,15 +495,33 @@ namespace BottomNavigationViewPager
             _fm5.ShowAppSettingsMenu();
         }
 
+        public static int _serviceTimer = 0;
+
         public override void OnWindowFocusChanged(bool hasFocus)
         {
+            
+            CustomStickyService _service = new CustomStickyService();
+
             Globals._bkgrd = true;
+            
+            if (!hasFocus)
+            {
+
+            }
+            else
+            {
+            }
 
             while (_globals.IsInBkGrd())
             {
                 Task.Delay(1200);
 
                 _globals.IsInBkGrd();
+
+                if (!CustomStickyService._serviceIsLooping)
+                {
+                    _service.StickyLoop();
+                }
             }
         }
 
