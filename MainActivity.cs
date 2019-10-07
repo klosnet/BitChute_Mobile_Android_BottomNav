@@ -449,7 +449,7 @@ namespace BottomNavigationViewPager
                             _navViewItemList[tab].SetTitle("Settings");
                             _navViewItemList[tab].SetIcon(_main.GetDrawable(Resource.Drawable.tab_settings));
                             _tab4Icon = _main.GetDrawable(Resource.Drawable.tab_settings);
-                            TheFragment5._url = Globals.URLs._myChannel;
+                            TheFragment5._url = Globals.URLs._settings;
                         }
                         if (changeDetails == "Home")
                         {
@@ -512,6 +512,15 @@ namespace BottomNavigationViewPager
                     break;
             }
         }
+        
+        public Android.App.ActivityManager CustomGetActivityManager()
+        {
+            
+            Android.App.ActivityManager _am = (Android.App.ActivityManager)Android.App.Application
+                    .Context.GetSystemService(Context.ActivityService);
+
+            return _am;
+        }
 
         public static int _serviceTimer = 0;
 
@@ -532,7 +541,7 @@ namespace BottomNavigationViewPager
 
             while (_globals.IsInBkGrd())
             {
-                Task.Delay(1200);
+                Task.Delay(3600);
                 _globals.IsInBkGrd();
                 _service.ServiceViewOverride();
 
