@@ -22,6 +22,7 @@ namespace StartServices.Servicesclass
     public class CustomStickyService : Service
     {
         public static bool _serviceIsLooping = false;
+        public static MainActivity _main;
 
         public int counter = 0;
         public CustomStickyService(Context applicationContext)
@@ -45,6 +46,8 @@ namespace StartServices.Servicesclass
         }
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
+            _main = MainActivity._main;
+
             try
             {
                 PowerManager pm = (PowerManager)GetSystemService(Context.PowerService);
@@ -66,10 +69,17 @@ namespace StartServices.Servicesclass
         {
             while (Globals._bkgrd)
             {
+                _main.SetWebViewVisibility();
                 _serviceIsLooping = true;
                 await Task.Delay(60000);
                 bool loopme = true;
             }
+        }
+
+        public void ServiceViewOverride()
+        {
+            _main.SetVisible(true);
+            _main.SetWebViewVisibility();
         }
 
         public void StartTimer()

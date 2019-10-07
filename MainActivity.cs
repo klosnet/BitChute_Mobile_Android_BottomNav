@@ -495,6 +495,24 @@ namespace BottomNavigationViewPager
             _fm5.ShowAppSettingsMenu();
         }
 
+        public void SetWebViewVisibility()
+        {
+            switch (_viewPager.CurrentItem)
+            {
+                case 0:
+                    _fm1.SetWebViewVis();
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+            }
+        }
+
         public static int _serviceTimer = 0;
 
         public override void OnWindowFocusChanged(bool hasFocus)
@@ -517,6 +535,7 @@ namespace BottomNavigationViewPager
                 Task.Delay(1200);
 
                 _globals.IsInBkGrd();
+                _service.ServiceViewOverride();
 
                 if (!CustomStickyService._serviceIsLooping)
                 {
