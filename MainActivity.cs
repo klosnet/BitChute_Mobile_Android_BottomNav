@@ -533,7 +533,6 @@ namespace BottomNavigationViewPager
             while (_globals.IsInBkGrd())
             {
                 Task.Delay(1200);
-
                 _globals.IsInBkGrd();
                 _service.ServiceViewOverride();
 

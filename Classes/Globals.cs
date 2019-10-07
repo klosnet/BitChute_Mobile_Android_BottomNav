@@ -55,9 +55,6 @@ namespace BottomNavigationViewPager.Classes
         /// <returns>bool</returns>
         public bool IsInBkGrd()
         {
-
-
-
             var _ctx = Android.App.Application.Context;
 
             var runningAppProcesses = _am.RunningAppProcesses;
@@ -65,7 +62,15 @@ namespace BottomNavigationViewPager.Classes
             List<Android.App.ActivityManager.RunningAppProcessInfo> list
                 = new List<Android.App.ActivityManager.RunningAppProcessInfo>();
 
-            list.AddRange(_am.RunningAppProcesses);
+            if (list != null)
+            {
+                list.AddRange(_am.RunningAppProcesses);
+            }
+            else
+            {
+                _bkgrd = true;
+                return _bkgrd;
+            }
 
             if (list != null)
             {
