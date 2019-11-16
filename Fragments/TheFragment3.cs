@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
+using Android.Content.Res;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V4.App;
+using Android.Util;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using BottomNavigationViewPager.Classes;
+using Java.IO;
+using StartServices.Servicesclass;
 using static Android.Views.View;
+using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BottomNavigationViewPager.Fragments
 {
@@ -19,7 +25,7 @@ namespace BottomNavigationViewPager.Fragments
         string _title;
         string _icon;
 
-        protected static WebView _wv;
+        public static ServiceWebView _wv;
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         bool tabLoaded = false;
@@ -52,29 +58,21 @@ namespace BottomNavigationViewPager.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout3, container, false);
-
-            _wv = _view.FindViewById<WebView>(Resource.Id.webView3);
+            _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView3);
 
             if (!tabLoaded)
             {
                 _wv.SetWebViewClient(_wvc);
-
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
-
                 _wv.Settings.DisplayZoomControls = false;
-
                 _wv.LoadUrl(_url);
-
                 _wv.Settings.JavaScriptEnabled = true;
-
                 //_wv.Settings.AllowFileAccess = true;
-
                 //_wv.Settings.AllowContentAccess = true;
-
                 tabLoaded = true;
             }
             _wv.SetOnTouchListener(new ExtTouchListener());
-
+            _wv.SetOnScrollChangeListener(new ExtScrollListener());
             return _view;
         }
 
@@ -124,13 +122,30 @@ namespace BottomNavigationViewPager.Fragments
             }
         }
 
-        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
-        //{
-        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-        //    {
-        //        _main.CustomOnTouch();
-        //    }
-        //}
+        private static int _scrollY = 0;
+
+        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        {
+            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+            {
+                OnScrollChanged(scrollY);
+            }
+        }
+
+        public static async void OnScrollChanged(int scrollY)
+        {
+            await Task.Delay(60);
+            _scrollY += scrollY;
+            if (Globals.AppState.Display._horizontal)
+            {
+                await Task.Delay(100);
+                if (_scrollY >= 3500)
+                {
+                    ExpandVideoCards(false);
+                    _scrollY = 0;
+                }
+            }
+        }
 
         public void WebViewGoBack()
         {
@@ -165,38 +180,20 @@ namespace BottomNavigationViewPager.Fragments
             if (!_wvRling)
             {
                 _wvRling = true;
-
                 await Task.Delay(Globals.AppSettings._tabDelay);
-
                 _wvRl = true;
-
                 _wvRling = false;
             }
         }
-
-        //public static bool _showMoreTimeout = false;
-
-        //public void ShowMore()
-        //{
-        //    if (!_showMoreTimeout)
-        //    {
-        //        _showMoreTimeout = true;
-        //        System.Threading.Thread.Sleep(5000);
-        //        _wv.LoadUrl(Globals.JavascriptCommands._jqShowMore);
-
-        //        _showMoreTimeout = false;
-
-        //    }
-        //}
-
-        /// <summary>
-        /// we have to set this with a delay or it won't fix the link overflow
-        /// </summary>
+        
+            /// <summary>
+            /// hides the link overflow
+            /// </summary>
         public static async void HideLinkOverflow()
         {
             await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
-
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
         }
 
         public void LoadCustomUrl(string url)
@@ -204,28 +201,47 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(url);
         }
 
-        public static async void HidePageTitle()
+        public static async void HidePageTitle(int delay)
         {
-            await Task.Delay(5000);
+            if (delay != 0)
+            {
+                await Task.Delay(delay);
+            }
 
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+            if (_wv.Url != "https://www.bitchute.com/" && Globals.AppState.Display._horizontal)
+            {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsPageBarDelete);
+            }
         }
 
-        private static async void HideWatchLabel()
+        private static async void HideWatchLabel(int delay)
         {
-            await Task.Delay(2000);
+            await Task.Delay(delay);
             _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
         }
-
-        public void SetWebViewVis()
+        
+        public static async void ExpandVideoCards(bool delayed)
         {
-            _wv.Visibility = ViewStates.Visible;
+            if (delayed)
+            {
+                await Task.Delay(5000);
+            }
+            _wv.LoadUrl(Globals.JavascriptCommands._jsBorderBoxAll);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsRemoveMaxWidthAll);
         }
 
+        public static async void SelectSubscribedTab(int delay)
+        {
+            await Task.Delay(delay);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsSelectSubscribed);
+        }
+        
         public class ExtWebViewClient : WebViewClient
         {
+
             public override void OnPageFinished(WebView view, string url)
             {
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
@@ -233,32 +249,42 @@ namespace BottomNavigationViewPager.Fragments
 
                 if (url != "https://www.bitchute.com/")
                 {
-                    HideWatchLabel();
+                    HideWatchLabel(2000);
                 }
 
                 if (TheFragment5._tab3Hide)
                 {
                     _wv.LoadUrl(Globals.JavascriptCommands._jsHideCarousel);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
+                    _wv.LoadUrl(Globals.JavascriptCommands._jsSelectSubscribed);
+                    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideTab1);
+                    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideTab2);
+                    //_wv.LoadUrl(Globals.JavascriptCommands._jsSelectTab3);
+                    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideTrending);
                     //_wv.LoadUrl(Globals.JavascriptCommands._jsHideLabel);
+                    TheFragment3.SelectSubscribedTab(5000);
                 }
 
                 if (Globals.AppState.Display._horizontal)
                 {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
-                    HidePageTitle();
+                    //if (url != "https://www.bitchute.com/")
+                    //{
+                    //    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
+                    //    _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
+                    //    _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+                    //    _wv.LoadUrl(Globals.JavascriptCommands._jsPageBarDelete);
+                    //    //_wv.LoadUrl(Globals.JavascriptCommands._jsHideNavTabsList);
+                    //}
+
+                    HidePageTitle(5000);
                 }
 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
-
+                //InjectCSS();
                 SetReload();
                 HideLinkOverflow();
-
+                ExpandVideoCards(true);
+                //_wv.LoadUrl(Globals.JavascriptCommands._jsFillAvailable);
+                
                 base.OnPageFinished(view, url);
             }
         }

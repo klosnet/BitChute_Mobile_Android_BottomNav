@@ -5,9 +5,11 @@ using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using BottomNavigationViewPager.Classes;
+using StartServices.Servicesclass;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static StartServices.Servicesclass.ExtStickyService;
 
 namespace BottomNavigationViewPager.Fragments
 {
@@ -16,11 +18,10 @@ namespace BottomNavigationViewPager.Fragments
         string _title;
         string _icon;
 
-        protected static WebView _wv;
+        protected static ServiceWebView _wv;
         readonly ExtWebViewClient _wvc = new ExtWebViewClient();
 
         public static string _url = "https://www.bitchute.com/profile";
-
         bool tabLoaded = false;
 
         public static TheFragment4 NewInstance(string title, string icon) {
@@ -34,7 +35,6 @@ namespace BottomNavigationViewPager.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
             if (Arguments != null)
             {
                 if(Arguments.ContainsKey("title"))
@@ -70,27 +70,21 @@ namespace BottomNavigationViewPager.Fragments
         {
             var _view = inflater.Inflate(Resource.Layout.TheFragmentLayout4, container, false);
 
-            _wv = _view.FindViewById<WebView>(Resource.Id.webView4);
+            _wv = (ServiceWebView)_view.FindViewById<ServiceWebView>(Resource.Id.webView4);
 
             if (!tabLoaded)
             {
                 _wv.SetWebViewClient(new ExtWebViewClient());
-
                 _wv.Settings.MediaPlaybackRequiresUserGesture = false;
-
                 _wv.Settings.DisplayZoomControls = false;
-
                 _wv.LoadUrl(_url);
-
                 _wv.Settings.JavaScriptEnabled = true;
-
                 //_wv.Settings.AllowFileAccess = true;
-
                 //_wv.Settings.AllowContentAccess = true;
-
                 tabLoaded = true;
             }
             _wv.SetOnTouchListener(new ExtTouchListener());
+            _wv.SetOnScrollChangeListener(new ExtScrollListener());
             return _view;
         }
 
@@ -104,14 +98,30 @@ namespace BottomNavigationViewPager.Fragments
                 return false;
             }
         }
+        private static int _scrollY = 0;
 
-        //public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
-        //{
-        //    public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
-        //    {
-        //        _main.CustomOnTouch();
-        //    }
-        //}
+        public class ExtScrollListener : Java.Lang.Object, View.IOnScrollChangeListener
+        {
+            public void OnScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY)
+            {
+                OnScrollChanged(scrollY);
+            }
+        }
+
+        public static async void OnScrollChanged(int scrollY)
+        {
+            await Task.Delay(60);
+            _scrollY += scrollY;
+            if (Globals.AppState.Display._horizontal)
+            {
+                await Task.Delay(500);
+                if (_scrollY >= 4000)
+                {
+                    ExpandVideoCards(false);
+                    _scrollY = 0;
+                }
+            }
+        }
 
         public static bool _wvRling = false;
 
@@ -174,6 +184,7 @@ namespace BottomNavigationViewPager.Fragments
             await Task.Delay(Globals.AppSettings._linkOverflowFixDelay);
 
             _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsDisableTooltips);
         }
         
         public void LoadCustomUrl(string url)
@@ -181,23 +192,17 @@ namespace BottomNavigationViewPager.Fragments
             _wv.LoadUrl(url);
         }
 
-        public static async void HidePageTitle()
+        public static async void HidePageTitle(int delay)
         {
-            await Task.Delay(1000);
+            await Task.Delay(delay);
 
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-            if (Globals.AppState.Display._horizontal)
+            if (_wv.Url != "https://www.bitchute.com/" && Globals.AppState.Display._horizontal)
             {
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsPageBarDelete);
+                _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
             }
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
-        }
-
-        private static async void HideWatchLabel()
-        {
-            await Task.Delay(1000);
-            if (Globals.AppState.Display._horizontal)
-            _wv.LoadUrl(Globals.JavascriptCommands._jsHideTabInner);
         }
 
         public void SetWebViewVis()
@@ -205,11 +210,20 @@ namespace BottomNavigationViewPager.Fragments
             _wv.Visibility = ViewStates.Visible;
         }
 
+        public static async void ExpandVideoCards(bool delayed)
+        {
+            if (delayed)
+            {
+                await Task.Delay(5000);
+            }
+            _wv.LoadUrl(Globals.JavascriptCommands._jsBorderBoxAll);
+            _wv.LoadUrl(Globals.JavascriptCommands._jsRemoveMaxWidthAll);
+        }
+
         private class ExtWebViewClient : WebViewClient
         {
             public override void OnPageFinished(WebView view, string url)
             {
-                HideWatchLabel();
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBanner);
                 _wv.LoadUrl(Globals.JavascriptCommands._jsHideBuff);
 
@@ -230,18 +244,12 @@ namespace BottomNavigationViewPager.Fragments
 
                 if (Globals.AppState.Display._horizontal)
                 {
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideTitle);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHideWatchTab);
-                    _wv.LoadUrl(Globals.JavascriptCommands._jsHidePageBar);
-                    HidePageTitle();
+                    HidePageTitle(5000);
                 }
                 
                 _wv.LoadUrl(Globals.JavascriptCommands._jsLinkFixer);
-
                 HideLinkOverflow();
-                
                 SetReload();
-
                 base.OnPageFinished(view, url);
             }
         }
